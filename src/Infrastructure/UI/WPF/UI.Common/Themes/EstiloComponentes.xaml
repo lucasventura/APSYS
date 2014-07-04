@@ -1,0 +1,305 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:extToolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit/extended"
+                    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit">
+    <!--xmlns:viblendEditors="clr-namespace:VIBlend.WPF.Controls;assembly=VIBlend.WPF.Editors">-->
+
+    <SolidColorBrush x:Key="TextColor" Color="#444"/>
+
+    <Style x:Key="textBlockDefault" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Margin" Value="10" />
+        <Setter Property="FontFamily" Value="Arial" />
+    </Style>
+
+    <Style x:Key="textBlockVendaQtde" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Margin" Value="5" />
+        <Setter Property="FontFamily" Value="Arial" />
+    </Style>
+    <Style x:Key="textBlockVendaCodigo" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="10" />
+        <Setter Property="Margin" Value="2" />
+        <Setter Property="FontFamily" Value="Arial" />
+    </Style>
+    <Style x:Key="textBlockVendaNome" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Margin" Value="2" />
+        <Setter Property="FontFamily" Value="Arial" />
+    </Style>
+    <Style x:Key="textBlockVendaPreco" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Margin" Value="8" />
+        <Setter Property="FontFamily" Value="Arial" />
+    </Style>
+
+
+    <Style x:Key="textBlockTituloPainelInicial" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Margin" Value="10,5,5,0" />
+    </Style>
+
+    <Style x:Key="textBoxDefault" TargetType="TextBox">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Margin" Value="1" />
+        <Setter Property="FontFamily" Value="Arial" />
+        <Setter Property="Height" Value="20" />
+        <Style.Triggers>
+            <Trigger Property="Validation.HasError" Value="true">
+                <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="textBlockMacro" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Margin" Value="5" />
+        <Setter Property="FontFamily" Value="Arial" />
+    </Style>
+
+    <Style x:Key="textBoxMacro" TargetType="TextBox">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Margin" Value="1" />
+        <Setter Property="FontFamily" Value="Arial" />
+        <Setter Property="Height" Value="20" />
+        <Setter Property="Width" Value="50" />
+        <Setter Property="IsReadOnly" Value="True" />
+
+    </Style>
+
+    <Style x:Key="passwordBoxDefault" TargetType="PasswordBox">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Margin" Value="1" />
+        <Setter Property="FontFamily" Value="Arial" />
+        <Setter Property="Height" Value="20" />
+    </Style>
+
+    <!--   <Style x:Key="dateTimeEditorDefault" TargetType="viblendEditors:DateTimeEditor">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Margin" Value="1" />
+        <Setter Property="FontFamily" Value="Arial" />
+        <Setter Property="Height" Value="20" />
+        <Style.Triggers>
+            <Trigger Property="Validation.HasError" Value="true">
+                <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>-->
+
+    <Style x:Key="tgDefault" TargetType="{x:Type ToggleButton}">
+        <Setter Property="FontFamily" Value="Arial"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Height" Value="20"/>
+        <Setter Property="Width" Value="100"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="Margin" Value="10"/>
+    </Style>
+
+    <Style x:Key="tgPonto" TargetType="{x:Type ToggleButton}">
+        <Setter Property="FontFamily" Value="Arial"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Height" Value="16"/>
+        <Setter Property="Width" Value="16"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="Margin" Value="2"/>
+    </Style>
+
+    <Style x:Key="comboBoxDefault" TargetType="{x:Type ComboBox}">
+        <Setter Property="FontFamily" Value="Arial"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Height" Value="20"/>
+    </Style>
+
+    <Style x:Key="sliderDefault" TargetType="{x:Type Slider}">
+        <Setter Property="FontFamily" Value="Arial"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Height" Value="20"/>
+    </Style>
+
+    <!--  <Style x:Key="numberEditorDefault" TargetType="viblendEditors:NumberEditor">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Margin" Value="1" />
+        <Setter Property="FontFamily" Value="Arial" />
+        <Setter Property="Height" Value="20" />
+    </Style>-->
+
+    <Style x:Key="watermarkTextBoxDefault" TargetType="xctk:WatermarkTextBox">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Margin" Value="1" />
+        <Setter Property="FontFamily" Value="Arial" />
+        <Setter Property="Height" Value="20" />
+        <Style.Triggers>
+            <Trigger Property="Validation.HasError" Value="true">
+                <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="maskedTextBoxDefault" TargetType="xctk:MaskedTextBox">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Margin" Value="1" />
+        <Setter Property="FontFamily" Value="Arial" />
+        <Setter Property="Height" Value="20" />
+        <Style.Triggers>
+            <Trigger Property="Validation.HasError" Value="true">
+                <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="integerUpDownDefault" TargetType="xctk:IntegerUpDown">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Margin" Value="1" />
+        <Setter Property="FontFamily" Value="Arial" />
+        <Setter Property="Height" Value="20" />
+    </Style>
+
+    <Style x:Key="doubleUpDownDefault" TargetType="xctk:DoubleUpDown">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Margin" Value="1" />
+        <Setter Property="FontFamily" Value="Arial" />
+        <Setter Property="Height" Value="20" />
+    </Style>
+
+    <Style x:Key="cbxDefault" TargetType="CheckBox">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Margin" Value="10" />
+        <Setter Property="FontFamily" Value="Arial" />
+    </Style>
+
+    <Style x:Key="btnDefault" TargetType="Button">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Margin" Value="5" />
+        <Setter Property="FontFamily" Value="Arial" />
+        <Setter Property="Width" Value="80" />
+    </Style>
+
+    <Style x:Key="dataGridDefault" TargetType="DataGrid">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Margin" Value="1" />
+        <Setter Property="FontFamily" Value="Arial" />
+        <Setter Property="Margin" Value="10" />
+    </Style>
+
+    <Style x:Key="itemsControlDefault" TargetType="ItemsControl">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Margin" Value="1" />
+        <Setter Property="FontFamily" Value="Arial" />
+        <Setter Property="Margin" Value="10" />
+    </Style>
+
+    <Style x:Key="linePainelInicial" TargetType="Line">
+        <Setter Property="Stroke" Value="Black" />
+        <Setter Property="StrokeThickness" Value="2" />
+        <Setter Property="Margin" Value="10,0,0,0" />
+    </Style>
+
+    <Style TargetType="{x:Type ToggleButton}" x:Key="toggleButtonStyle">
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="FontFamily" Value="Arial"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Height" Value="16"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="Margin" Value="2"/>
+
+        <Style.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+                <!--<Setter Property="Content" Value="IsChecked='True'" />-->
+                <Setter Property="Foreground" Value="Green" />
+            </Trigger>
+            <Trigger Property="IsChecked" Value="False">
+                <!--<Setter Property="Content" Value="IsChecked='False'" />-->
+                <Setter Property="Foreground" Value="Red" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="{x:Type ToggleButton}" x:Key="toggleButtonStyle2">
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="FontFamily" Value="Arial"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Height" Value="16"/>
+        <Setter Property="Width" Value="25"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="Margin" Value="2"/>
+
+        <Style.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+                <!--<Setter Property="Content" Value="IsChecked='True'" />-->
+                <Setter Property="Foreground" Value="Blue" />
+            </Trigger>
+            <Trigger Property="IsChecked" Value="False">
+                <!--<Setter Property="Content" Value="IsChecked='False'" />-->
+                <Setter Property="Foreground" Value="SteelBlue" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <DataTemplate x:Key="WrappingComboTemplate">
+        <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
+    </DataTemplate>
+
+    <Style x:Key="MyItemContainerStyle" TargetType="{x:Type xctk:SelectorItem}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template" >
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type xctk:SelectorItem}">
+                    <Border x:Name="_background" 
+                            Background="{TemplateBinding Background}" 
+                            BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <CheckBox VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                  IsChecked="{Binding IsSelected, RelativeSource={RelativeSource TemplatedParent}}" 
+                                  Content="{TemplateBinding Content}" 
+                                  ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter TargetName="_background" Property="Background" Value="#FFB8E0F3" />
+                            <Setter TargetName="_background" Property="BorderBrush" Value="#FF26A0DA" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="defaultCheckComboBox" TargetType="{x:Type xctk:CheckComboBox}">
+        <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FontFamily" Value="Trebuchet MS" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Padding" Value="6,2,25,2" />
+
+        <Setter Property="Template" Value="{DynamicResource ComboBoxTemplate}" />
+    </Style>
+    
+    <!--<ImageSource x:Key="CloseLargeImageSource" >..\Images\Remover.png</ImageSource>-->
+
+    <Style x:Key="VerticalSeparatorStyle" 
+       TargetType="{x:Type Separator}"
+       BasedOn="{StaticResource {x:Type Separator}}">
+        <Setter Property="Margin" Value="10,0,10,0"/>
+        <Setter Property="LayoutTransform">
+            <Setter.Value>
+                <TransformGroup>
+                    <TransformGroup.Children>
+                        <TransformCollection>
+                            <RotateTransform Angle="90"/>
+                        </TransformCollection>
+                    </TransformGroup.Children>
+                </TransformGroup>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>
