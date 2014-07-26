@@ -1,10 +1,10 @@
-﻿namespace APSYS.Infrastructure.Communication.Serial
+﻿namespace APSYS.Infrastructure.Communication.Domain.Serial
 {
-    using System;
-    using System.Collections.Concurrent;
-    using System.IO.Ports;
+	using System;
+	using System.Collections.Concurrent;
+	using System.IO.Ports;
 
-    /// <summary>
+	/// <summary>
 	/// Serial Port Service and Configure
 	/// </summary>
 	public class SerialPortService : ICommunicationOBC

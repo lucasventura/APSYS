@@ -1,13 +1,13 @@
-﻿namespace APSYS.Infrastructure.Communication.WebSocket
+﻿namespace APSYS.Infrastructure.Communication.Domain.WebSocket
 {
-    using System;
-    using System.Net.WebSockets;
-    using System.Text;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using ServiceStack;
+	using System;
+	using System.Net.WebSockets;
+	using System.Text;
+	using System.Threading;
+	using System.Threading.Tasks;
+	using ServiceStack;
 
-    /// <summary>
+	/// <summary>
     /// Serviço que trata do Websocket
     /// </summary>
     public class WebSocketService

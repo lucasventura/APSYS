@@ -1,4 +1,4 @@
-﻿namespace APSYS.Infrastructure.Communication.WebSocket
+﻿namespace APSYS.Infrastructure.Communication.Domain.WebSocket
 {
 	/// <summary>
 	/// Classe do protocolo de comunicação definido para o WebSocket

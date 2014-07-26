@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("OBC.Net.Communication")]
+[assembly: AssemblyTitle("APSYS.Infrastructure.Communication.Domain")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("OBC.Net.Communication")]
+[assembly: AssemblyProduct("APSYS.Infrastructure.Communication.Domain")]
 [assembly: AssemblyCopyright("Copyright ©  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("3d7482ef-053f-4d03-8923-0e9af9b2338a")]
+[assembly: Guid("acfce7be-6d2b-409d-bb38-fad026161811")]
 
 // Version information for an assembly consists of the following four values:
 //

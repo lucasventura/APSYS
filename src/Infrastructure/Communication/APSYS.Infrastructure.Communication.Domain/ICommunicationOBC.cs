@@ -1,9 +1,9 @@
-﻿namespace APSYS.Infrastructure.Communication
+﻿namespace APSYS.Infrastructure.Communication.Domain
 {
-    using System;
-    using System.Collections.Concurrent;
+	using System;
+	using System.Collections.Concurrent;
 
-    public interface ICommunicationOBC
+	public interface ICommunicationOBC
 	{
 		/// <summary>
 		/// Verify that the Communication Channel is Open

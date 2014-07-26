@@ -1,10 +1,10 @@
-﻿namespace APSYS.Infrastructure.Communication.Utils
+﻿namespace APSYS.Infrastructure.Communication.Domain.Utils
 {
-    using System.Collections.Generic;
-    using System.IO.Ports;
-    using System.Linq;
+	using System.Collections.Generic;
+	using System.IO.Ports;
+	using System.Linq;
 
-    /// <summary>
+	/// <summary>
 	/// Utils for Serial Port
 	/// </summary>
 	public class SerialPortUtil
