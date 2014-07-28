@@ -2,14 +2,37 @@
 {
 	using System;
 	using System.Collections.Concurrent;
+	using System.Diagnostics.CodeAnalysis;
 	using System.IO.Ports;
 
 	/// <summary>
 	/// Serial Port Service and Configure
 	/// </summary>
+	[SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "This is OK here.")]
+	[SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1642:ConstructorSummaryDocumentationMustBeginWithStandardText", Justification = "Reviewed.")]
+	[SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1623:PropertySummaryDocumentationMustMatchAccessors", Justification = "Reviewed.")]
 	public class SerialPortService : ICommunicationOBC
 	{
 		private SerialPort _serialPort;
+
+		/// <summary>
+		/// Default Constructor with a portName and BaudRate 9600 
+		/// </summary>
+		/// <param name="portName">Serial Port Name</param>
+		public SerialPortService(string portName)
+		{
+			InitializeSerialPort(portName, 9600);
+		}
+		
+		/// <summary>
+		/// Constructor based on a port Name and a baud Rate
+		/// </summary>
+		/// <param name="portName">Serial Port Name</param>
+		/// <param name="baudRate">Serial Baud Rate</param>
+		public SerialPortService(string portName, int baudRate)
+		{
+			InitializeSerialPort(portName, baudRate);
+		}
 
 		/// <summary>
 		/// Serial port state enum
@@ -26,26 +49,7 @@
 			/// </summary>
 			Close
 		}
-
-		/// <summary>
-		/// Default Constructor with a portName and BaudRate 9600 
-		/// </summary>
-		/// <param name="portName">Serial Port Name</param>
-		public SerialPortService(string portName)
-		{
-			InitializeSerialPort(portName, 9600);
-		}
-
-		/// <summary>
-		/// Constructor based on a port Name and a baud Rate
-		/// </summary>
-		/// <param name="portName">Serial Port Name</param>
-		/// <param name="baudRate">Serial Baud Rate</param>
-		public SerialPortService(string portName, int baudRate)
-		{
-			InitializeSerialPort(portName, baudRate);
-		}
-
+		
 		/// <summary>
 		/// Verify that the Communication Channel is Connected
 		/// </summary>
@@ -58,7 +62,7 @@
 		}
 
 		/// <summary>
-		/// Verify that the Communication Channel is Open
+		/// Gets Verify that the Communication Channel is Open
 		/// </summary>
 		public bool IsOpen
 		{
@@ -74,7 +78,7 @@
 		}
 
 		/// <summary>
-		/// Serial Port Status
+		/// Gets the Serial Port Status
 		/// </summary>
 		public SerialPortStatus Status
 		{
@@ -145,17 +149,7 @@
 			string newData = sp.ReadLine();
 			DataEnqueue.Enqueue(newData);
 		}
-
-		private void InitializeSerialPort(string port, int baudRate)
-		{
-			_serialPort = new SerialPort();
-			_serialPort.PortName = port;
-			_serialPort.BaudRate = baudRate;
-			_serialPort.DataReceived += ReceivedData;
-			DataEnqueue = new ConcurrentQueue<string>();
-			Connect();
-		}
-
+		
 		public void Close()
 		{
 			try
@@ -169,6 +163,16 @@
 			{
 				throw new Exception(e.Message, e);
 			}
+		}
+		
+		private void InitializeSerialPort(string port, int baudRate)
+		{
+			_serialPort = new SerialPort();
+			_serialPort.PortName = port;
+			_serialPort.BaudRate = baudRate;
+			_serialPort.DataReceived += ReceivedData;
+			DataEnqueue = new ConcurrentQueue<string>();
+			Connect();
 		}
 	}
 }

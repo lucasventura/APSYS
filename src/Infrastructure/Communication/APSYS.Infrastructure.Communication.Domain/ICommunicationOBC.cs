@@ -2,7 +2,10 @@
 {
 	using System;
 	using System.Collections.Concurrent;
+	using System.Diagnostics.CodeAnalysis;
 
+	[SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1642:ConstructorSummaryDocumentationMustBeginWithStandardText", Justification = "Reviewed.")]
+	[SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1623:PropertySummaryDocumentationMustMatchAccessors", Justification = "Reviewed.")]
 	public interface ICommunicationOBC
 	{
 		/// <summary>
