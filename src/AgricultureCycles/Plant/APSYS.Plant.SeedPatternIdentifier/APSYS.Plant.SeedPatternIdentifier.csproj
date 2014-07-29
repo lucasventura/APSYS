@@ -63,10 +63,13 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Planter.cs" />
     <Compile Include="SeedPatternIdentifierView.xaml.cs">
       <DependentUpon>SeedPatternIdentifierView.xaml</DependentUpon>
     </Compile>
     <Compile Include="SeedPatternIdentifierViewModel.cs" />
+    <Compile Include="SeedTube.cs" />
+    <Compile Include="SeedTubeData.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
