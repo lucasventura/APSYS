@@ -64,6 +64,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Planter.cs" />
+    <Compile Include="PlanterService.cs" />
     <Compile Include="SeedPatternIdentifierView.xaml.cs">
       <DependentUpon>SeedPatternIdentifierView.xaml</DependentUpon>
     </Compile>

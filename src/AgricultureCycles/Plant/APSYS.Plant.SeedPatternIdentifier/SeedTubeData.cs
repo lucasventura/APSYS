@@ -11,7 +11,7 @@ namespace APSYS.Plant.SeedPatternIdentifier
         {
             try
             {
-                char[] separator = { ';' };
+                char[] separator = { ',' };
                 var splitFields = sensorData.Split(separator, StringSplitOptions.RemoveEmptyEntries);
 
                 var seedTubeData = new SeedTubeData();

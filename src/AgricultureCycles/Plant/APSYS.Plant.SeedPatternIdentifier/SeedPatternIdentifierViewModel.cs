@@ -1,10 +1,15 @@
 namespace APSYS.Plant.SeedPatternIdentifier
 {
     using System;
+    using System.IO;
+    using System.Linq;
     using System.Text;
     using System.Windows.Input;
     using APSYS.Infrastructure.Communication.Domain.Serial;
     using NLog;
+    using NLog.Layouts;
+    using NLog.Targets;
+    using NLog.Targets.Wrappers;
     using UI.Shared;
 
     public class SeedPatternIdentifierViewModel : BaseViewModel
@@ -16,8 +21,10 @@ namespace APSYS.Plant.SeedPatternIdentifier
 
         public SeedPatternIdentifierViewModel()
         {
-            _logger = LogManager.GetLogger("logData");
-            GlobalDiagnosticsContext.Set("StartTime", DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss"));
+            /*
+                        _logger = LogManager.GetLogger("logDataRule");
+                        GlobalDiagnosticsContext.Set("StartTime", DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss"));
+            */
         }
 
         public ICommand SaveCommand
@@ -37,23 +44,24 @@ namespace APSYS.Plant.SeedPatternIdentifier
 
         private void Save()
         {
-            StringBuilder stb = new StringBuilder();
-            var random = new Random();
+            var names = LogManager.Configuration.FileNamesToWatch;
 
-            for (int i = 0; i < 100; i++)
+            var fileName = GetLogFileName("logData");
+            var directory = Directory.GetParent(fileName);
+
+            var lastOrDefault = directory.EnumerateFiles().LastOrDefault();
+            if (lastOrDefault != null)
             {
-                for (int j = 1; j < 4; j++)
+                try
                 {
-                    var rnd = random.Next(0, 1000);
-                    stb.Append(j);
-                    stb.Append(";");
-                    stb.Append(rnd);
-                    stb.AppendLine(";");
+                    StreamReader str = new StreamReader(lastOrDefault.FullName);
+                    var planter = PlanterService.Verify(str.ReadToEnd());
+                }
+                catch (Exception e)
+                {
+                    _logger.Error(e.Message);
                 }
             }
-
-            string logData = stb.ToString();
-            var planter = Planter.Verify(logData);
 
             /*_serialPortService.Close();
             string message = string.Empty;
@@ -61,6 +69,52 @@ namespace APSYS.Plant.SeedPatternIdentifier
             {
                 _logger.Info(message);
             }*/
+        }
+
+        private string GetLogFileName(string targetName)
+        {
+            string fileName = null;
+
+            if (LogManager.Configuration != null && LogManager.Configuration.ConfiguredNamedTargets.Count != 0)
+            {
+                Target target = LogManager.Configuration.FindTargetByName(targetName);
+                if (target == null)
+                {
+                    throw new Exception("Could not find target named: " + targetName);
+                }
+
+                FileTarget fileTarget = null;
+                WrapperTargetBase wrapperTarget = target as WrapperTargetBase;
+
+                // Unwrap the target if necessary.
+                if (wrapperTarget == null)
+                {
+                    fileTarget = target as FileTarget;
+                }
+                else
+                {
+                    fileTarget = wrapperTarget.WrappedTarget as FileTarget;
+                }
+
+                if (fileTarget == null)
+                {
+                    throw new Exception("Could not get a FileTarget from " + target.GetType());
+                }
+
+                var logEventInfo = new LogEventInfo { TimeStamp = DateTime.Now };
+                fileName = fileTarget.FileName.Render(logEventInfo);
+            }
+            else
+            {
+                throw new Exception("LogManager contains no Configuration or there are no named targets");
+            }
+
+            /*  if (!File.Exists(fileName))
+              {
+                  throw new Exception("File " + fileName + " does not exist");
+              }*/
+
+            return fileName;
         }
     }
 }

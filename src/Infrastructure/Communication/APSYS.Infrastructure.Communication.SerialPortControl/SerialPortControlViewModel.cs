@@ -21,8 +21,7 @@
 
         public SerialPortControlViewModel()
         {
-            // _logger = LogManager.GetLogger("logFile");
-            _logger = LogManager.GetCurrentClassLogger();
+            _logger = LogManager.GetLogger("logFileRule");
 
             SerialPorts = new ObservableCollection<string>();
             var ports = SerialPortUtil.AvaliablesPorts();
@@ -33,7 +32,7 @@
             }
 
             BaudRates = new ObservableCollection<int> { 300, 600, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600 };
-            BaudRate = BaudRates.FirstOrDefault(a => a == 9600);
+            BaudRate = BaudRates.FirstOrDefault(a => a == 115200);
             SerialPortName = SerialPorts.FirstOrDefault();
         }
 
@@ -102,7 +101,7 @@
         private void SerialPortOnOff()
         {
             GlobalDiagnosticsContext.Set("StartTime", DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss"));
-            _loggerData = LogManager.GetLogger("logData");
+            _loggerData = LogManager.GetLogger("logDataRule");
             if (_serialPortService == null || _serialPortService.Status == SerialPortService.SerialPortStatus.Close)
             {
                 OpenSerialPort();
@@ -150,9 +149,6 @@
         {
             try
             {
-                string teste = string.Empty;
-                _serialPortService.DataEnqueue.TryDequeue(out teste);
-                _logger.Info(teste);
                 _serialPortService.Close();
                 _logger.Info("Serial Port {0} - {1} closed", SerialPortName, BaudRate);
             }

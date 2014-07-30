@@ -150,7 +150,7 @@
             try
             {
                 SerialPort sp = (SerialPort)sender;
-                string newData = sp.ReadLine();
+                string newData = sp.ReadExisting();
                 DataEnqueue.Enqueue(newData);
             }
             catch (Exception exception)
