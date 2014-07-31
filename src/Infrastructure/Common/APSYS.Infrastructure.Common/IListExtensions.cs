@@ -1,11 +1,11 @@
-﻿namespace OBC.Net.Model.Utils
+﻿namespace APSYS.Infrastructure.Common
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Collections.ObjectModel;
-	using System.Linq;
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Linq;
 
-	/// <summary>
+    /// <summary>
 	/// Extensões de lista
 	/// </summary>
 	public static class IListExtensions

@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{74E2D249-B1E9-4073-9279-60DB3AE2CFFA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AgricultureCycle", "AgricultureCycle", "{320B984C-4FC7-4492-B70A-D338C2A9912C}"
@@ -22,6 +24,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APSYS.Infrastructure.Communication.Domain", "Infrastructure\Communication\APSYS.Infrastructure.Communication.Domain\APSYS.Infrastructure.Communication.Domain.csproj", "{D2BA3811-DE03-4711-B0D5-04743095BD06}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APSYS.Infrastructure.Communication.SerialPortControl", "Infrastructure\Communication\APSYS.Infrastructure.Communication.SerialPortControl\APSYS.Infrastructure.Communication.SerialPortControl.csproj", "{1B24E331-EBEC-4ABF-8E3B-238569C4C043}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{A378F4D8-AE46-45E6-B856-2FF960953640}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APSYS.Infrastructure.Common", "Infrastructure\Common\APSYS.Infrastructure.Common\APSYS.Infrastructure.Common.csproj", "{58E20E25-6E02-41CD-A2F7-1C5295D354F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,6 +55,10 @@ Global
 		{1B24E331-EBEC-4ABF-8E3B-238569C4C043}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B24E331-EBEC-4ABF-8E3B-238569C4C043}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B24E331-EBEC-4ABF-8E3B-238569C4C043}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58E20E25-6E02-41CD-A2F7-1C5295D354F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58E20E25-6E02-41CD-A2F7-1C5295D354F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58E20E25-6E02-41CD-A2F7-1C5295D354F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58E20E25-6E02-41CD-A2F7-1C5295D354F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -56,6 +66,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{84A679B3-9D19-4002-8027-B6F6C57CC6E7} = {74E2D249-B1E9-4073-9279-60DB3AE2CFFA}
 		{217BD201-0DE3-4E80-8AE6-5A6A811258A7} = {74E2D249-B1E9-4073-9279-60DB3AE2CFFA}
+		{A378F4D8-AE46-45E6-B856-2FF960953640} = {74E2D249-B1E9-4073-9279-60DB3AE2CFFA}
 		{A3EEAD0E-0893-4AC6-A3A9-1E7F6AB82FE8} = {320B984C-4FC7-4492-B70A-D338C2A9912C}
 		{610FDC53-1398-4FDB-985C-281F62A1B4A7} = {A3EEAD0E-0893-4AC6-A3A9-1E7F6AB82FE8}
 		{DD734C53-2248-4010-A0D3-7FD9ECB5190C} = {84A679B3-9D19-4002-8027-B6F6C57CC6E7}
@@ -63,5 +74,6 @@ Global
 		{FD13E3EC-0978-414C-9ACA-8EED6617124E} = {DD734C53-2248-4010-A0D3-7FD9ECB5190C}
 		{D2BA3811-DE03-4711-B0D5-04743095BD06} = {217BD201-0DE3-4E80-8AE6-5A6A811258A7}
 		{1B24E331-EBEC-4ABF-8E3B-238569C4C043} = {217BD201-0DE3-4E80-8AE6-5A6A811258A7}
+		{58E20E25-6E02-41CD-A2F7-1C5295D354F9} = {A378F4D8-AE46-45E6-B856-2FF960953640}
 	EndGlobalSection
 EndGlobal

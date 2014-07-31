@@ -13,40 +13,66 @@ namespace APSYS.Plant.SeedPatternIdentifier
         {
             _loggerResults = LogManager.GetLogger("logDataResultsRule");
             _loggerResults.Info("---------------------------------------- Nova Verificação ----------------------------------------\n");
-            int errorcount = 1;
 
-            var seedTubeDatas = new List<SeedTubeData>();
+            const int numberOfSensorsPerSeedTube = 3;
+            int errorcount = 1;
+            int order = 1;
+            var seedTubeDataReadings = new List<SeedTubeDataReading>();
 
             var splitFields = ParseData(logData);
 
             foreach (var seedTubeDataLine in splitFields)
             {
                 char[] separator = { '_' };
-                var seedTubeDataLines = seedTubeDataLine.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+                var seedTubeDataReadingText = seedTubeDataLine.Split(separator, StringSplitOptions.RemoveEmptyEntries);
 
-                if (seedTubeDataLines.Count() == 3)
+                if (seedTubeDataReadingText.Count() == numberOfSensorsPerSeedTube)
                 {
-                    foreach (var tubeDataLine in seedTubeDataLines)
+                    var seedTubeDatas = new List<SeedTubeData>();
+                    foreach (string seedTubeDataText in seedTubeDataReadingText)
                     {
-                        var seedTubeData = SeedTubeData.ParseSensorData(tubeDataLine);
+                        var seedTubeData = SeedTubeDataService.ParseSensorData(seedTubeDataText);
 
                         if (seedTubeData == null)
                         {
-                            _loggerResults.Error("Erro {1} no parse de um sensor: {0}", tubeDataLine, errorcount++);
+                            _loggerResults.Error("Erro {1} no parse de um sensor: {0}", seedTubeDataText, errorcount++);
                             continue;
                         }
 
                         seedTubeDatas.Add(seedTubeData);
                     }
+
+                    if (seedTubeDatas.Count == numberOfSensorsPerSeedTube)
+                    {
+                        if (seedTubeDatas.Select(a => a.SensorNumber).Distinct().Count() == numberOfSensorsPerSeedTube)
+                        {
+                            var seedTubeDataReading = new SeedTubeDataReading()
+                            {
+                                Order = order++,
+                                SeedTubeDataReadings = seedTubeDatas
+                            };
+
+                            seedTubeDataReadings.Add(seedTubeDataReading);
+                        }
+                        else
+                        {
+                            _loggerResults.Error("Leituras com sensores duplicados", seedTubeDatas.Count);
+                        }
+                    }
+                    else
+                    {
+                        _loggerResults.Error("Leituras com apenas {0} sensores", seedTubeDatas.Count);
+                    }
                 }
                 else
                 {
-                    _loggerResults.Error("Erro {1} no parse da linha: {0}", seedTubeDataLine, errorcount++);
-                    continue;
+                    _loggerResults.Error("Erro {1} no parse da linha devido ao número de sensores do tubo de semente {2} ser diferente: {0}", seedTubeDataLine, errorcount++, numberOfSensorsPerSeedTube);
                 }
             }
 
-            var todosSensores = seedTubeDatas.GroupBy(a => a.SensorNumber);
+            var seedCounter = SeedTubeDataService.GetSeedCounter(seedTubeDataReadings);
+
+            var todosSensores = seedTubeDataReadings.SelectMany(a => a.SeedTubeDataReadings).GroupBy(a => a.SensorNumber);
 
             foreach (IGrouping<int, SeedTubeData> sensor in todosSensores)
             {
@@ -64,7 +90,7 @@ namespace APSYS.Plant.SeedPatternIdentifier
             var seedTubes = new List<SeedTube>();
             var seedTube = new SeedTube()
             {
-                SeedTubeDatas = seedTubeDatas,
+                SeedTubeDataReadings = seedTubeDataReadings,
                 SeedTubeNumber = 1
             };
 

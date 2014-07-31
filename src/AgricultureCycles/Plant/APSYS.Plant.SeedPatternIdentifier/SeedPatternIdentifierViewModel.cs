@@ -32,6 +32,22 @@ namespace APSYS.Plant.SeedPatternIdentifier
             get { return new RelayCommand(Save, CanSave); }
         }
 
+        public ICommand PatternIdentifierCommand
+        {
+            get { return new RelayCommand(PatternIdentifier, CanPatternIdentifier); }
+        }
+
+        private bool CanPatternIdentifier()
+        {
+            // injetar dependencia para verificar se porta serial esta aberta
+            return true;
+        }
+
+        private void PatternIdentifier()
+        {
+           // todo: identificar Padrão inicial dos sensores
+        }
+
         private bool CanSave()
         {
             /* if (_serialPortService == null || _serialPortService.DataEnqueue.Count < 1)
