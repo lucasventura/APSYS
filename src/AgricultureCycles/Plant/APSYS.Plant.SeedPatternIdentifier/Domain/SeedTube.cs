@@ -1,18 +1,16 @@
-namespace APSYS.Plant.SeedPatternIdentifier
+namespace APSYS.Plant.SeedPatternIdentifier.Domain
 {
     using System.Collections.Generic;
     using Infrastructure.Common;
 
-    public class SeedTubeDataReading
+    public class SeedTube
     {
-        public List<SeedTubeData> SeedTubeDataReadings { get; set; }
-
-        // public DateTime ReadingTime { get; set; }
-        public int Order { get; set; }
+        public int SeedTubeNumber { get; set; }
+        public List<SeedTubeDataReading> SeedTubeDataReadings { get; set; }
 
         public override string ToString()
         {
-            string text = string.Format("{0} --- ", Order);
+            string text = string.Format("{0} --- ", SeedTubeNumber);
 
             if (SeedTubeDataReadings != null)
             {

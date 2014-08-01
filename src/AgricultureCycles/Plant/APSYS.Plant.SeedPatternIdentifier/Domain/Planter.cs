@@ -1,4 +1,4 @@
-namespace APSYS.Plant.SeedPatternIdentifier
+namespace APSYS.Plant.SeedPatternIdentifier.Domain
 {
     using System.Collections.Generic;
 

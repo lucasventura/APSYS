@@ -38,6 +38,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac">
+      <HintPath>..\..\..\..\libs\Autofac.3.5.0\lib\net40\Autofac.dll</HintPath>
+    </Reference>
     <Reference Include="NLog">
       <HintPath>..\..\..\..\libs\NLog.3.1.0.0\lib\net45\NLog.dll</HintPath>
     </Reference>
@@ -63,17 +66,18 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Planter.cs" />
-    <Compile Include="PlanterService.cs" />
-    <Compile Include="SeedCounter.cs" />
-    <Compile Include="SeedPatternIdentifierView.xaml.cs">
+    <Compile Include="Domain\Planter.cs" />
+    <Compile Include="SeedPatternIdentifierContainer.cs" />
+    <Compile Include="Service\PlanterService.cs" />
+    <Compile Include="Domain\SeedCounter.cs" />
+    <Compile Include="View\SeedPatternIdentifierView.xaml.cs">
       <DependentUpon>SeedPatternIdentifierView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SeedPatternIdentifierViewModel.cs" />
-    <Compile Include="SeedTube.cs" />
-    <Compile Include="SeedTubeData.cs" />
-    <Compile Include="SeedTubeDataReading.cs" />
-    <Compile Include="SeedTubeDataService.cs" />
+    <Compile Include="ViewModel\SeedPatternIdentifierViewModel.cs" />
+    <Compile Include="Domain\SeedTube.cs" />
+    <Compile Include="Domain\SeedTubeData.cs" />
+    <Compile Include="Domain\SeedTubeDataReading.cs" />
+    <Compile Include="Service\SeedTubeDataService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -106,12 +110,16 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="SeedPatternIdentifierView.xaml">
+    <Page Include="View\SeedPatternIdentifierView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\APSYS.Core\APSYS.Core.csproj">
+      <Project>{D412531C-A191-451F-84DA-83B4810D90F6}</Project>
+      <Name>APSYS.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Infrastructure\Common\APSYS.Infrastructure.Common\APSYS.Infrastructure.Common.csproj">
       <Project>{58E20E25-6E02-41CD-A2F7-1C5295D354F9}</Project>
       <Name>APSYS.Infrastructure.Common</Name>

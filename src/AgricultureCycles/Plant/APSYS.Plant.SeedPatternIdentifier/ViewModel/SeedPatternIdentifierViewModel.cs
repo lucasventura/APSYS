@@ -1,18 +1,19 @@
-namespace APSYS.Plant.SeedPatternIdentifier
+namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
 {
     using System;
     using System.IO;
     using System.Linq;
-    using System.Text;
     using System.Windows.Input;
-    using APSYS.Infrastructure.Communication.Domain.Serial;
+    using Core.Service;
+    using Infrastructure.Communication.Domain.Serial;
     using NLog;
-    using NLog.Layouts;
     using NLog.Targets;
     using NLog.Targets.Wrappers;
+    using Service;
     using UI.Shared;
+    using View;
 
-    public class SeedPatternIdentifierViewModel : BaseViewModel
+    public class SeedPatternIdentifierViewModel : BaseViewModel<SeedPatternIdentifierView>
     {
         private SerialPortService _serialPortService;
         private Logger _logger;
@@ -45,7 +46,7 @@ namespace APSYS.Plant.SeedPatternIdentifier
 
         private void PatternIdentifier()
         {
-           // todo: identificar Padrão inicial dos sensores
+            // todo: identificar Padrão inicial dos sensores
         }
 
         private bool CanSave()

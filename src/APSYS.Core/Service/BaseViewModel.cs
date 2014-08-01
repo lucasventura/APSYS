@@ -1,7 +1,13 @@
-﻿using System.ComponentModel;
-
-namespace UI.Shared
+﻿namespace APSYS.Core.Service
 {
+    using System.ComponentModel;
+    using UI.Shared;
+
+    public class BaseViewModel<TView> : BaseViewModel
+    {
+        public TView View { get; set; }
+    }
+
     /// <summary>
     /// ViewModel Base
     /// </summary>

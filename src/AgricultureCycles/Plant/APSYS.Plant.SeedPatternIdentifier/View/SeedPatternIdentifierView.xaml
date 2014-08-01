@@ -1,8 +1,9 @@
-﻿<Window x:Class="APSYS.Plant.SeedPatternIdentifier.SeedPatternIdentifierView"
+﻿<service:BaseView x:Class="APSYS.Plant.SeedPatternIdentifier.View.SeedPatternIdentifierView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:serialPortControl="clr-namespace:APSYS.Infrastructure.Communication.SerialPortControl;assembly=APSYS.Infrastructure.Communication.SerialPortControl"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:service="clr-namespace:APSYS.Core.Service;assembly=APSYS.Core"
         Title="SeedPatternIdentifierView">
     <xctk:BusyIndicator BusyContent="{Binding StatusProcessamento}" IsBusy="{Binding Processando}" >
         <StackPanel>
@@ -16,4 +17,4 @@
             </StackPanel>
         </StackPanel>
     </xctk:BusyIndicator>
-</Window>
+</service:BaseView>

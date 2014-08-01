@@ -29,6 +29,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{A378F4
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APSYS.Infrastructure.Common", "Infrastructure\Common\APSYS.Infrastructure.Common\APSYS.Infrastructure.Common.csproj", "{58E20E25-6E02-41CD-A2F7-1C5295D354F9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APSYS.Core", "APSYS.Core\APSYS.Core.csproj", "{D412531C-A191-451F-84DA-83B4810D90F6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{58E20E25-6E02-41CD-A2F7-1C5295D354F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58E20E25-6E02-41CD-A2F7-1C5295D354F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58E20E25-6E02-41CD-A2F7-1C5295D354F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D412531C-A191-451F-84DA-83B4810D90F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D412531C-A191-451F-84DA-83B4810D90F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D412531C-A191-451F-84DA-83B4810D90F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D412531C-A191-451F-84DA-83B4810D90F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
