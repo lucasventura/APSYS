@@ -5,9 +5,11 @@
     /// </summary>
     public partial class SerialPortControlView
     {
-        public SerialPortControlView()
+        public SerialPortControlView(SerialPortControlViewModel serialPortControlViewModel)
         {
             InitializeComponent();
+
+            DataContext = serialPortControlViewModel;
         }
     }
 }

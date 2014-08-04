@@ -2,15 +2,14 @@
 {
     using System;
     using System.Collections.ObjectModel;
-    using System.ComponentModel;
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
-    using APSYS.Infrastructure.Communication.Domain.Serial;
-    using APSYS.Infrastructure.Communication.Domain.Utils;
-    using Core.Service;
+    using Core.MVVM;
+    using Domain;
+    using Domain.Serial;
+    using Domain.Utils;
     using NLog;
-    using UI.Shared;
 
     public class SerialPortControlViewModel : BaseViewModel<SerialPortControlView>
     {
@@ -19,7 +18,26 @@
         private Logger _loggerData;
         private string _serialPortName;
         private int _baudRate;
-      
+
+        // public SerialPortControlViewModel()
+        public SerialPortControlViewModel(SerialPortService serialPortService)
+        {
+            _serialPortService = serialPortService;
+            _logger = LogManager.GetLogger("logFileRule");
+
+            SerialPorts = new ObservableCollection<string>();
+            var ports = SerialPortUtil.AvaliablesPorts();
+            foreach (string port in ports)
+            {
+                _logger.Info("Serial Port {0} added", port);
+                SerialPorts.Add(port);
+            }
+
+            BaudRates = new ObservableCollection<int> { 300, 600, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600 };
+            BaudRate = BaudRates.FirstOrDefault(a => a == 115200);
+            SerialPortName = SerialPorts.FirstOrDefault();
+        }
+
         public string SerialButtonText
         {
             get
@@ -82,23 +100,6 @@
             }
         }
 
-        public override void Initialize()
-        {
-            _logger = LogManager.GetLogger("logFileRule");
-
-            SerialPorts = new ObservableCollection<string>();
-            var ports = SerialPortUtil.AvaliablesPorts();
-            foreach (string port in ports)
-            {
-                _logger.Info("Serial Port {0} added", port);
-                SerialPorts.Add(port);
-            }
-
-            BaudRates = new ObservableCollection<int> { 300, 600, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600 };
-            BaudRate = BaudRates.FirstOrDefault(a => a == 115200);
-            SerialPortName = SerialPorts.FirstOrDefault();
-        }
-
         private void SerialPortOnOff()
         {
             GlobalDiagnosticsContext.Set("StartTime", DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss"));
@@ -131,7 +132,7 @@
 
             try
             {
-                _serialPortService = new SerialPortService(SerialPortName, BaudRate);
+                _serialPortService.InitializeSerialPort(SerialPortName, BaudRate);
                 RaisePropertyChanged("SerialButtonText");
                 RaisePropertyChanged("SerialClosed");
                 _logger.Info("Serial Port {0} - {1} opened", SerialPortName, BaudRate);

@@ -1,4 +1,4 @@
-﻿namespace APSYS.Core.Service
+﻿namespace APSYS.Core.MVVM
 {
     using System.Windows;
     using System.Windows.Controls;

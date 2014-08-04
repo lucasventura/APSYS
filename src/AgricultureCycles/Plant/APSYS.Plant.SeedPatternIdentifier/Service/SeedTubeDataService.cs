@@ -4,9 +4,15 @@ namespace APSYS.Plant.SeedPatternIdentifier.Service
     using System.Collections.Generic;
     using System.Linq;
     using Domain;
+    using NLog;
 
     public class SeedTubeDataService
     {
+        // todo: corrigir logs com IoC
+        private static Logger _loggerResults;
+
+        public static List<SensorParameter> SensorParameters { get; set; }
+
         public static SeedTubeData ParseSensorData(string sensorData)
         {
             try
@@ -36,9 +42,14 @@ namespace APSYS.Plant.SeedPatternIdentifier.Service
             {
                 foreach (var tubeDataReading in seedTubeDataReading.SeedTubeDataReadings)
                 {
-                    int maxValueSensor = GetMaxValueSensorBySensorNumber(tubeDataReading.SensorNumber);
+                    var maxValueSensor = GetMaxValueSensorBySensorNumber(tubeDataReading.SensorNumber);
 
-                    if (tubeDataReading.SensorValue > maxValueSensor)
+                    if (maxValueSensor == null)
+                    {
+                        throw new Exception(string.Format("Sensor {0} não existe.", tubeDataReading.SensorNumber));
+                    }
+
+                    if (tubeDataReading.SensorValue > maxValueSensor.SensorMaxValue)
                     {
                         tubeDataReading.HasSeed = true;
                     }
@@ -50,30 +61,126 @@ namespace APSYS.Plant.SeedPatternIdentifier.Service
             return seedCounter;
         }
 
-        private static int GetMaxValueSensorBySensorNumber(int sensorNumber)
+        public static List<SeedTubeDataReading> MountSeedTubeDataReadings(IEnumerable<string> seedTubeDataLineText)
         {
-            // todo: Fazer calibracao setando variaveis e numeros de sensores
-            int maxValueSensor1 = 150;
-            int maxValueSensor2 = 68;
-            int maxValueSensor3 = 85;
+            _loggerResults = LogManager.GetLogger("logDataResultsRule");
+            _loggerResults.Info("---------------------------------------- Nova Verificação ----------------------------------------\n");
 
-            if (sensorNumber == 1)
+            var seedTubeDataReadings = new List<SeedTubeDataReading>();
+
+            const int numberOfSensorsPerSeedTube = 3;
+            int errorcount = 1;
+            int order = 1;
+
+            foreach (var seedTubeDataLine in seedTubeDataLineText)
             {
-                return maxValueSensor1;
+                char[] separator = { '_' };
+                var seedTubeDataReadingText = seedTubeDataLine.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+
+                if (seedTubeDataReadingText.Count() == numberOfSensorsPerSeedTube)
+                {
+                    var seedTubeDatas = new List<SeedTubeData>();
+                    foreach (string seedTubeDataText in seedTubeDataReadingText)
+                    {
+                        var seedTubeData = SeedTubeDataService.ParseSensorData(seedTubeDataText);
+
+                        if (seedTubeData == null)
+                        {
+                            _loggerResults.Error("Erro {1} no parse de um sensor: {0}", seedTubeDataText, errorcount++);
+                            continue;
+                        }
+
+                        seedTubeDatas.Add(seedTubeData);
+                    }
+
+                    if (seedTubeDatas.Count == numberOfSensorsPerSeedTube)
+                    {
+                        if (seedTubeDatas.Select(a => a.SensorNumber).Distinct().Count() == numberOfSensorsPerSeedTube)
+                        {
+                            var seedTubeDataReading = new SeedTubeDataReading()
+                            {
+                                Order = order++,
+                                SeedTubeDataReadings = seedTubeDatas
+                            };
+
+                            seedTubeDataReadings.Add(seedTubeDataReading);
+                        }
+                        else
+                        {
+                            _loggerResults.Error("Leituras com sensores duplicados", seedTubeDatas.Count);
+                        }
+                    }
+                    else
+                    {
+                        _loggerResults.Error("Leituras com apenas {0} sensores", seedTubeDatas.Count);
+                    }
+                }
+                else
+                {
+                    _loggerResults.Error("Erro {1} no parse da linha devido ao número de sensores do tubo de semente {2} ser diferente: {0}", seedTubeDataLine, errorcount++, numberOfSensorsPerSeedTube);
+                }
             }
 
-            if (sensorNumber == 2)
+            return seedTubeDataReadings;
+        }
+
+        public static IEnumerable<string> SplitPureTextToSeedTube(string logData)
+        {
+            char[] separatora = { ';', '\r', '\n', '$', '_' };
+            var splitFieldsa = logData.Split(separatora, StringSplitOptions.RemoveEmptyEntries);
+
+            var filterLogData = logData.Replace("Iniciando", string.Empty);
+            filterLogData = filterLogData.Replace("\r", string.Empty);
+            filterLogData = filterLogData.Replace("\n", string.Empty);
+            var count = filterLogData.Replace("?", string.Empty);
+            var diff = filterLogData.Length - count.Length;
+
+            var exists = count.Any(a => !char.IsNumber(a) && a != ',' && a != ';' && a != '$' && a != '_');
+
+            if (exists)
             {
-                return maxValueSensor2;
+                var diffs = count.Where(a => !char.IsNumber(a) && a != ',' && a != ';' && a != '$' && a != '_').ToList();
             }
 
-            if (sensorNumber == 3)
+            char[] separator = { '$', ';' };
+            var splitFields = count.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+
+            var difff = splitFieldsa.Count() - splitFields.Count();
+            return splitFields;
+        }
+
+        public static void AddSensorParameter(SensorParameter sp)
+        {
+            if (SensorParameters == null)
             {
-                return maxValueSensor3;
+                SensorParameters = new List<SensorParameter>();
             }
 
-            string message = string.Format("Sensor {0} não existente.", sensorNumber);
-            throw new Exception(message);
+            var sensorParameter = SensorParameters.FirstOrDefault(a => a.SensorNumber == sp.SensorNumber);
+
+            if (sensorParameter != null)
+            {
+                sensorParameter.SensorMaxValue = sp.SensorMaxValue;
+            }
+            else
+            {
+                SensorParameters.Add(sp);
+            }
+        }
+
+        private static SensorParameter GetMaxValueSensorBySensorNumber(int sensorNumber)
+        {
+            if (SensorParameters == null)
+            {
+                return null;
+            }
+
+            if (!SensorParameters.Any(a => a.SensorNumber == sensorNumber))
+            {
+                return null;
+            }
+
+            return SensorParameters.First(a => a.SensorNumber == sensorNumber);
         }
     }
 }

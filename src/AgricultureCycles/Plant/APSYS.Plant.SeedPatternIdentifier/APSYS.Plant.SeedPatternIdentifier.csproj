@@ -70,6 +70,7 @@
     <Compile Include="SeedPatternIdentifierContainer.cs" />
     <Compile Include="Service\PlanterService.cs" />
     <Compile Include="Domain\SeedCounter.cs" />
+    <Compile Include="Service\SensorParameter.cs" />
     <Compile Include="View\SeedPatternIdentifierView.xaml.cs">
       <DependentUpon>SeedPatternIdentifierView.xaml</DependentUpon>
     </Compile>
@@ -131,10 +132,6 @@
     <ProjectReference Include="..\..\..\Infrastructure\Communication\APSYS.Infrastructure.Communication.SerialPortControl\APSYS.Infrastructure.Communication.SerialPortControl.csproj">
       <Project>{1B24E331-EBEC-4ABF-8E3B-238569C4C043}</Project>
       <Name>APSYS.Infrastructure.Communication.SerialPortControl</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Infrastructure\UI\WPF\UI.Shared\UI.Shared.csproj">
-      <Project>{FD13E3EC-0978-414C-9ACA-8EED6617124E}</Project>
-      <Name>UI.Shared</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

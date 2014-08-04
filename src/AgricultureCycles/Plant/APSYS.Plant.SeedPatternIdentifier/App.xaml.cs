@@ -3,7 +3,7 @@
     using System.Windows;
     using Autofac;
     using Core;
-    using Core.Service;
+    using Core.MVVM;
     using View;
     using ViewModel;
 
@@ -32,7 +32,13 @@
             base.OnStartup(e);
 
             var windowManager = _container.Container.Resolve<WindowManager>();
+
             windowManager.ShowDialogWindow<SeedPatternIdentifierView, SeedPatternIdentifierViewModel>();
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            base.OnExit(e);
         }
     }
 }

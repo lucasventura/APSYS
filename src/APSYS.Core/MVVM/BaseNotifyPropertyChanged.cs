@@ -1,4 +1,4 @@
-﻿namespace UI.Shared
+﻿namespace APSYS.Core.MVVM
 {
     using System.ComponentModel;
 

@@ -1,7 +1,7 @@
 ﻿namespace APSYS.Plant.SeedPatternIdentifier.View
 {
+    using System.ComponentModel;
     using System.Windows;
-    using ViewModel;
 
     /// <summary>
     /// Interaction logic for SeedPatternIdentifierView.xaml
@@ -11,6 +11,16 @@
         public SeedPatternIdentifierView()
         {
             InitializeComponent();
+
+            Closing += ClosingHandler;
+        }
+
+        private void ClosingHandler(object sender, CancelEventArgs e)
+        {
+            /*if (MessageBox.Show("Deseja realmente fechar?", "Fechar", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel)
+            {
+                e.Cancel = true;
+            }*/
         }
     }
 }

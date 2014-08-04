@@ -1,32 +1,38 @@
 namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
 {
     using System;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
+    using System.Threading;
     using System.Windows.Input;
-    using Core.Service;
+    using System.Windows.Threading;
+    using Core.MVVM;
     using Infrastructure.Communication.Domain.Serial;
+    using Infrastructure.Communication.SerialPortControl;
     using NLog;
     using NLog.Targets;
     using NLog.Targets.Wrappers;
     using Service;
-    using UI.Shared;
     using View;
 
     public class SeedPatternIdentifierViewModel : BaseViewModel<SeedPatternIdentifierView>
     {
-        private SerialPortService _serialPortService;
+        private readonly SerialPortService _serialPortService;
         private Logger _logger;
         private string _serialPort;
         private int _baudRate;
+        private DispatcherTimer _dispatcherTimerCalibration;
 
-        public SeedPatternIdentifierViewModel()
+        public SeedPatternIdentifierViewModel(SerialPortService serialPortService, SerialPortControlView serialPortControlView)
         {
-            /*
-                        _logger = LogManager.GetLogger("logDataRule");
-                        GlobalDiagnosticsContext.Set("StartTime", DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss"));
-            */
+            SerialPortControl = serialPortControlView;
+            _serialPortService = serialPortService;
+            _logger = LogManager.GetLogger("logDataRule");
+            GlobalDiagnosticsContext.Set("StartTime", DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss"));
         }
+
+        public SerialPortControlView SerialPortControl { get; set; }
 
         public ICommand SaveCommand
         {
@@ -40,13 +46,56 @@ namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
 
         private bool CanPatternIdentifier()
         {
-            // injetar dependencia para verificar se porta serial esta aberta
-            return true;
+            return _serialPortService.IsOpen && !_serialPortService.IsCalibration;
         }
 
         private void PatternIdentifier()
         {
-            // todo: identificar Padrão inicial dos sensores
+            _serialPortService.IsCalibration = true;
+
+            _dispatcherTimerCalibration = new DispatcherTimer();
+            _dispatcherTimerCalibration.Interval = TimeSpan.FromSeconds(10);
+            _dispatcherTimerCalibration.Tick += CalibrationTick;
+            _dispatcherTimerCalibration.Start();
+
+            _logger.Info("Timer de calibramento iniciado");
+        }
+
+        private void CalibrationTick(object sender, EventArgs e)
+        {
+            _dispatcherTimerCalibration.Stop();
+            _logger.Info("Timer de calibramento finalizado");
+
+            _serialPortService.IsCalibration = false;
+
+            string tst = string.Empty;
+            string dataLog;
+            while (_serialPortService.CalibrationDataEnqueue.TryDequeue(out dataLog))
+            {
+                _logger.Info(dataLog);
+                tst += dataLog;
+            }
+
+            var seedTubeDataText = SeedTubeDataService.SplitPureTextToSeedTube(tst);
+            var seedTubeDataReadings = SeedTubeDataService.MountSeedTubeDataReadings(seedTubeDataText);
+
+            foreach (var seedTubeDataReading in seedTubeDataReadings)
+            {
+                var allSeedsGroupBySensorNumber = seedTubeDataReading.SeedTubeDataReadings.GroupBy(a => a.SensorNumber);
+
+                foreach (var stdr in allSeedsGroupBySensorNumber)
+                {
+                    var maxValuePerSensor = stdr.Max(a => a.SensorValue);
+
+                    SensorParameter sp = new SensorParameter()
+                    {
+                        SensorMaxValue = (int)(maxValuePerSensor * 1.1),
+                        SensorNumber = stdr.Key
+                    };
+
+                    SeedTubeDataService.AddSensorParameter(sp);
+                }
+            }
         }
 
         private bool CanSave()

@@ -1,20 +1,20 @@
-﻿namespace UI.Shared
+﻿namespace APSYS.Core.MVVM
 {
     using System;
+    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Windows.Input;
 
     /// <summary>
-    /// A generic command whose sole purpose is to relay its functionality to other
+    /// A command whose sole purpose is to relay its functionality to other
     /// objects by invoking delegates. The default return value for the CanExecute
-    /// method is 'true'. This class allows you to accept command parameters in the
+    /// method is 'true'.  This class does not allow you to accept command parameters in the
     /// Execute and CanExecute callback methods.
     /// </summary>
-    /// <typeparam name="T">The type of the command parameter.</typeparam>
-    public class RelayCommand<T> : ICommand
+    public class RelayCommand : ICommand
     {
-        private readonly Predicate<T> _canExecute;
-        private readonly Action<T> _execute;
+        private readonly Func<bool> _canExecute;
+        private readonly Action _execute;
 
         /// <summary>
         /// Initializes a new instance of the RelayCommand class that 
@@ -22,7 +22,7 @@
         /// </summary>
         /// <param name="execute">The execution logic.</param>
         /// <exception cref="ArgumentNullException">If the execute argument is null.</exception>
-        public RelayCommand(Action<T> execute)
+        public RelayCommand(Action execute)
             : this(execute, null)
         {
         }
@@ -33,7 +33,7 @@
         /// <param name="execute">The execution logic.</param>
         /// <param name="canExecute">The execution status logic.</param>
         /// <exception cref="ArgumentNullException">If the execute argument is null.</exception>
-        public RelayCommand(Action<T> execute, Predicate<T> canExecute)
+        public RelayCommand(Action execute, Func<bool> canExecute)
         {
             if (execute == null)
             {
@@ -71,22 +71,21 @@
         /// <summary>
         /// Defines the method that determines whether the command can execute in its current state.
         /// </summary>
-        /// <param name="parameter">Data used by the command. If the command does not require data 
-        /// to be passed, this object can be set to a null reference</param>
+        /// <param name="parameter">This parameter will always be ignored.</param>
         /// <returns>true if this command can be executed; otherwise, false.</returns>
+        [DebuggerStepThrough]
         public bool CanExecute(object parameter)
         {
-            return _canExecute == null ? true : _canExecute((T)parameter);
+            return _canExecute == null ? true : _canExecute();
         }
 
         /// <summary>
         /// Defines the method to be called when the command is invoked. 
         /// </summary>
-        /// <param name="parameter">Data used by the command. If the command does not require data 
-        /// to be passed, this object can be set to a null reference</param>
+        /// <param name="parameter">This parameter will always be ignored.</param>
         public void Execute(object parameter)
         {
-            _execute((T)parameter);
+            _execute();
         }
 
         #endregion

@@ -1,7 +1,6 @@
-﻿namespace APSYS.Core.Service
+﻿namespace APSYS.Core.MVVM
 {
     using System.ComponentModel;
-    using UI.Shared;
 
     public class BaseViewModel<TView> : BaseViewModel
     {

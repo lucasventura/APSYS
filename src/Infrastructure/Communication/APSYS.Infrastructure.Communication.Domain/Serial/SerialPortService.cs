@@ -15,7 +15,6 @@
     public class SerialPortService : ICommunicationOBC
     {
         private SerialPort _serialPort;
-        private Logger _logger;
 
         /// <summary>
         /// Default Constructor with a portName and BaudRate 9600 
@@ -36,6 +35,10 @@
             InitializeSerialPort(portName, baudRate);
         }
 
+        public SerialPortService()
+        {
+        }
+
         /// <summary>
         /// Serial port state enum
         /// </summary>
@@ -51,6 +54,8 @@
             /// </summary>
             Close
         }
+
+        public bool IsCalibration { get; set; }
 
         /// <summary>
         /// Verify that the Communication Channel is Connected
@@ -94,6 +99,11 @@
         /// Receive Data Enqueue
         /// </summary>
         public ConcurrentQueue<string> DataEnqueue { get; set; }
+
+        /// <summary>
+        /// Receive Data Enqueue
+        /// </summary>
+        public ConcurrentQueue<string> CalibrationDataEnqueue { get; set; }
 
         /// <summary>
         /// Connect to the Communication Channel
@@ -151,6 +161,12 @@
             {
                 SerialPort sp = (SerialPort)sender;
                 string newData = sp.ReadExisting();
+
+                if (IsCalibration == true)
+                {
+                    CalibrationDataEnqueue.Enqueue(newData);
+                }
+
                 DataEnqueue.Enqueue(newData);
             }
             catch (Exception exception)
@@ -174,13 +190,14 @@
             }
         }
 
-        private void InitializeSerialPort(string port, int baudRate)
+        public void InitializeSerialPort(string port, int baudRate)
         {
             _serialPort = new SerialPort();
             _serialPort.PortName = port;
             _serialPort.BaudRate = baudRate;
             _serialPort.DataReceived += ReceivedData;
             DataEnqueue = new ConcurrentQueue<string>();
+            CalibrationDataEnqueue = new ConcurrentQueue<string>();
             Connect();
         }
     }
