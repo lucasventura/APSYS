@@ -57,6 +57,8 @@
 
         public bool IsCalibration { get; set; }
 
+        public bool IsDataEnqueueEnable { get; set; }
+
         /// <summary>
         /// Verify that the Communication Channel is Connected
         /// </summary>
@@ -162,12 +164,15 @@
                 SerialPort sp = (SerialPort)sender;
                 string newData = sp.ReadExisting();
 
-                if (IsCalibration == true)
+                if (IsCalibration)
                 {
                     CalibrationDataEnqueue.Enqueue(newData);
                 }
 
-                DataEnqueue.Enqueue(newData);
+                if (IsDataEnqueueEnable)
+                {
+                    DataEnqueue.Enqueue(newData);
+                }
             }
             catch (Exception exception)
             {

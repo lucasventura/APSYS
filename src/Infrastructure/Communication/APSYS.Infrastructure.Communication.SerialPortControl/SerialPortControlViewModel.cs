@@ -108,8 +108,6 @@
 
         private void SerialPortOnOff()
         {
-            GlobalDiagnosticsContext.Set("StartTime", DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss"));
-            _loggerData = LogManager.GetLogger("logDataRule");
             if (_serialPortService == null || _serialPortService.Status == SerialPortService.SerialPortStatus.Close)
             {
                 OpenSerialPort();
@@ -119,12 +117,6 @@
             if (_serialPortService.Status == SerialPortService.SerialPortStatus.Open)
             {
                 CloseSerialPort();
-
-                string dataLog;
-                while (_serialPortService.DataEnqueue.TryDequeue(out dataLog))
-                {
-                    _loggerData.Info(dataLog);
-                }
             }
         }
 

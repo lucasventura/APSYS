@@ -1,6 +1,7 @@
 namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.IO;
@@ -25,6 +26,8 @@ namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
         private readonly PlanterService _planterService;
         private Logger _logger;
         private DispatcherTimer _dispatcherTimerCalibration;
+        private bool _isLogEnable;
+        private Logger _loggerData;
 
         public SeedPatternIdentifierViewModel(SerialPortService serialPortService, SerialPortControlView serialPortControlView, SeedTubeDataService seedTubeDataService, PlanterService planterService)
         {
@@ -39,6 +42,23 @@ namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
         public SerialPortControlView SerialPortControl { get; set; }
 
         public ObservableCollection<SensorParameter> CalibrationParameters { get; set; }
+
+        public bool IsLogEnable
+        {
+            get
+            {
+                return _isLogEnable;
+            }
+
+            set
+            {
+                _isLogEnable = value;
+
+                _serialPortService.IsDataEnqueueEnable = _isLogEnable;
+
+                RaisePropertyChanged("IsLogEnable");
+            }
+        }
 
         public Visibility CalibrationSettingsVisibility
         {
@@ -55,7 +75,7 @@ namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
 
         public ICommand SaveCommand
         {
-            get { return new RelayCommand(Save, CanSave); }
+            get { return new RelayCommand(Save, CanCleanQueue); }
         }
 
         public ICommand PatternIdentifierCommand
@@ -63,9 +83,57 @@ namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
             get { return new RelayCommand(PatternIdentifier, CanPatternIdentifier); }
         }
 
+        public ICommand CleanQueueCommand
+        {
+            get { return new RelayCommand(CleanQueue, CanCleanQueue); }
+        }
+
+        public ICommand LastLogAnalyzeCommand
+        {
+            get { return new RelayCommand(LastLogAnalyze); }
+        }
+
         public override void Initialize()
         {
             CalibrationParameters = new ObservableCollection<SensorParameter>();
+        }
+
+        private bool CanCleanQueue()
+        {
+            return _serialPortService.DataEnqueue != null && _serialPortService.DataEnqueue.Count > 0;
+        }
+
+        private void CleanQueue()
+        {
+            ConcurrentQueue<string> newQueue = new ConcurrentQueue<string>();
+            _serialPortService.DataEnqueue = newQueue;
+        }
+
+        private void LastLogAnalyze()
+        {
+            var fileName = GetLogFileName("logData");
+            var directory = Directory.GetParent(fileName);
+
+            var lastOrDefault = directory.EnumerateFiles().LastOrDefault();
+            if (lastOrDefault != null)
+            {
+                try
+                {
+                    StreamReader str = new StreamReader(lastOrDefault.FullName);
+                    var planter = _planterService.Verify(str.ReadToEnd());
+
+                    //// todo: Exibir resultados
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    _logger.Error(e.Message);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Nenhum arquivo para analisar", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
 
         private bool CanPatternIdentifier()
@@ -127,44 +195,21 @@ namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
             RaisePropertyChanged("CalibrationSettingsVisibility");
         }
 
-        private bool CanSave()
-        {
-            /* if (_serialPortService == null || _serialPortService.DataEnqueue.Count < 1)
-             {
-                 return false;
-             }*/
-
-            return true;
-        }
-
         private void Save()
         {
-            var names = LogManager.Configuration.FileNamesToWatch;
+            var islogEnableTemp = IsLogEnable;
+            IsLogEnable = false;
 
-            var fileName = GetLogFileName("logData");
-            var directory = Directory.GetParent(fileName);
+            GlobalDiagnosticsContext.Set("StartTime", DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss"));
+            _loggerData = LogManager.GetLogger("logDataRule");
 
-            var lastOrDefault = directory.EnumerateFiles().LastOrDefault();
-            if (lastOrDefault != null)
+            string dataLog;
+            while (_serialPortService.DataEnqueue.TryDequeue(out dataLog))
             {
-                try
-                {
-                    StreamReader str = new StreamReader(lastOrDefault.FullName);
-                    var planter = _planterService.Verify(str.ReadToEnd());
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    _logger.Error(e.Message);
-                }
+                _loggerData.Info(dataLog);
             }
 
-            /*_serialPortService.Close();
-            string message = string.Empty;
-            while (_serialPortService.DataEnqueue.TryDequeue(out message))
-            {
-                _logger.Info(message);
-            }*/
+            IsLogEnable = islogEnableTemp;
         }
 
         private string GetLogFileName(string targetName)
