@@ -1,4 +1,4 @@
-namespace APSYS.Plant.SeedPatternIdentifier.Service
+namespace APSYS.Plant.SeedPatternIdentifier.Domain
 {
     public class SensorParameter
     {

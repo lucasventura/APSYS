@@ -56,6 +56,11 @@
             get { return new RelayCommand(SerialPortOnOff); }
         }
 
+        public ICommand MouseRightButtonUp
+        {
+            get { return new RelayCommand(UpdateSerialPorts); }
+        }
+
         public bool SerialClosed
         {
             get
@@ -70,6 +75,7 @@
         }
 
         public ObservableCollection<string> SerialPorts { get; set; }
+
         public ObservableCollection<int> BaudRates { get; set; }
 
         public string SerialPortName
@@ -163,6 +169,17 @@
 
             RaisePropertyChanged("SerialButtonText");
             RaisePropertyChanged("SerialClosed");
+        }
+
+        private void UpdateSerialPorts()
+        {
+            var ports = SerialPortUtil.AvaliablesPorts();
+            SerialPorts.Clear();
+            foreach (string port in ports)
+            {
+                _logger.Info("Serial Port {0} added", port);
+                SerialPorts.Add(port);
+            }
         }
     }
 }

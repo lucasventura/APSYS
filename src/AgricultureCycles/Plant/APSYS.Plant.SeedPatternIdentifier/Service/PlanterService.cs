@@ -8,20 +8,26 @@ namespace APSYS.Plant.SeedPatternIdentifier.Service
 
     public class PlanterService
     {
-        private static Logger _loggerResults;
+        private readonly SeedTubeDataService _seedTubeDataService;
+        private Logger _loggerResults;
 
-        public static Planter Verify(string logData)
+        public PlanterService(SeedTubeDataService seedTubeDataService)
+        {
+            _seedTubeDataService = seedTubeDataService;
+        }
+
+        public Planter Verify(string logData)
         {
             _loggerResults = LogManager.GetLogger("logDataResultsRule");
             _loggerResults.Info("---------------------------------------- Nova Verificação ----------------------------------------\n");
 
             int errorcount = 1;
 
-            var seedTubeDataLineText = SeedTubeDataService.SplitPureTextToSeedTube(logData);
+            var seedTubeDataLineText = _seedTubeDataService.SplitPureTextToSeedTube(logData);
 
-            var seedTubeDataReadings = SeedTubeDataService.MountSeedTubeDataReadings(seedTubeDataLineText);
+            var seedTubeDataReadings = _seedTubeDataService.MountSeedTubeDataReadings(seedTubeDataLineText);
 
-            var seedCounter = SeedTubeDataService.GetSeedCounter(seedTubeDataReadings);
+            var seedCounter = _seedTubeDataService.GetSeedCounter(seedTubeDataReadings);
 
             var todosSensores = seedTubeDataReadings.SelectMany(a => a.SeedTubeDataReadings).GroupBy(a => a.SensorNumber);
 

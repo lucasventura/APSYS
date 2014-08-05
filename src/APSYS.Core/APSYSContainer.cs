@@ -8,10 +8,6 @@
 
     public abstract class ApsysContainer
     {
-        public ContainerBuilder Builder { get; set; }
-
-        public IContainer Container { get; set; }
-
         public ApsysContainer()
         {
             Builder = new ContainerBuilder();
@@ -19,19 +15,25 @@
             AutomaticRegister();
         }
 
-        private void AutomaticRegister()
-        {
-            // Builder.RegisterType<SerialPortService>().As<ICommunicationOBC>();
-            Builder.RegisterType<SerialPortService>().SingleInstance();
-            Builder.RegisterType<WindowManager>().SingleInstance();
-            // Builder.RegisterModule<NLogModule>();
-        }
+        public ContainerBuilder Builder { get; set; }
+
+        public IContainer Container { get; set; }
 
         public abstract void RegisterServices();
 
         public void BuildContainer()
         {
             Container = Builder.Build();
+        }
+
+        private void AutomaticRegister()
+        {
+            // Builder.RegisterType<SerialPortService>().As<ICommunicationOBC>();
+            Builder.RegisterType<SerialPortService>().SingleInstance();
+            Builder.RegisterType<WindowManager>().SingleInstance();
+/*
+            // Builder.RegisterModule<NLogModule>();
+*/
         }
     }
 }

@@ -4,13 +4,20 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mvvm="clr-namespace:APSYS.Core.MVVM;assembly=APSYS.Core"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              mc:Ignorable="d" >
     <StackPanel>
         <GroupBox Header="Serial Configure" Margin="0,5">
             <StackPanel Margin="0,5,0,0">
                 <StackPanel>
                     <TextBlock>Port Name:</TextBlock>
-                    <ComboBox ItemsSource="{Binding SerialPorts}" SelectedItem="{Binding SerialPortName}" IsEnabled="{Binding SerialClosed}"></ComboBox>
+                    <ComboBox ItemsSource="{Binding SerialPorts}" SelectedItem="{Binding SerialPortName}" IsEnabled="{Binding SerialClosed}" ToolTip="Clique com o botão direito para atualizar as portas COM disponíveis">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseRightButtonUp">
+                                <i:InvokeCommandAction Command="{Binding MouseRightButtonUp}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
                 </StackPanel>
 
                 <StackPanel>

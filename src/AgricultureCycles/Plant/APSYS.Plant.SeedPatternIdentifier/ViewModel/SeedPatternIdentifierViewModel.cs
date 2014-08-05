@@ -1,13 +1,15 @@
 namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
 {
     using System;
-    using System.Diagnostics;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.IO;
     using System.Linq;
-    using System.Threading;
+    using System.Windows;
     using System.Windows.Input;
     using System.Windows.Threading;
     using Core.MVVM;
+    using Domain;
     using Infrastructure.Communication.Domain.Serial;
     using Infrastructure.Communication.SerialPortControl;
     using NLog;
@@ -19,20 +21,37 @@ namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
     public class SeedPatternIdentifierViewModel : BaseViewModel<SeedPatternIdentifierView>
     {
         private readonly SerialPortService _serialPortService;
+        private readonly SeedTubeDataService _seedTubeDataService;
+        private readonly PlanterService _planterService;
         private Logger _logger;
-        private string _serialPort;
-        private int _baudRate;
         private DispatcherTimer _dispatcherTimerCalibration;
 
-        public SeedPatternIdentifierViewModel(SerialPortService serialPortService, SerialPortControlView serialPortControlView)
+        public SeedPatternIdentifierViewModel(SerialPortService serialPortService, SerialPortControlView serialPortControlView, SeedTubeDataService seedTubeDataService, PlanterService planterService)
         {
             SerialPortControl = serialPortControlView;
             _serialPortService = serialPortService;
+            _seedTubeDataService = seedTubeDataService;
+            _planterService = planterService;
             _logger = LogManager.GetLogger("logDataRule");
             GlobalDiagnosticsContext.Set("StartTime", DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss"));
         }
 
         public SerialPortControlView SerialPortControl { get; set; }
+
+        public ObservableCollection<SensorParameter> CalibrationParameters { get; set; }
+
+        public Visibility CalibrationSettingsVisibility
+        {
+            get
+            {
+                if (_seedTubeDataService.SensorParameters == null || _seedTubeDataService.SensorParameters.Count < 1)
+                {
+                    return Visibility.Hidden;
+                }
+
+                return Visibility.Visible;
+            }
+        }
 
         public ICommand SaveCommand
         {
@@ -44,9 +63,14 @@ namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
             get { return new RelayCommand(PatternIdentifier, CanPatternIdentifier); }
         }
 
+        public override void Initialize()
+        {
+            CalibrationParameters = new ObservableCollection<SensorParameter>();
+        }
+
         private bool CanPatternIdentifier()
         {
-            return _serialPortService.IsOpen && !_serialPortService.IsCalibration;
+            return _serialPortService.IsOpen;
         }
 
         private void PatternIdentifier()
@@ -54,7 +78,7 @@ namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
             _serialPortService.IsCalibration = true;
 
             _dispatcherTimerCalibration = new DispatcherTimer();
-            _dispatcherTimerCalibration.Interval = TimeSpan.FromSeconds(10);
+            _dispatcherTimerCalibration.Interval = TimeSpan.FromSeconds(1);
             _dispatcherTimerCalibration.Tick += CalibrationTick;
             _dispatcherTimerCalibration.Start();
 
@@ -76,26 +100,31 @@ namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
                 tst += dataLog;
             }
 
-            var seedTubeDataText = SeedTubeDataService.SplitPureTextToSeedTube(tst);
-            var seedTubeDataReadings = SeedTubeDataService.MountSeedTubeDataReadings(seedTubeDataText);
+            var seedTubeDataText = _seedTubeDataService.SplitPureTextToSeedTube(tst);
+            var seedTubeDataReadings = _seedTubeDataService.MountSeedTubeDataReadings(seedTubeDataText);
 
-            foreach (var seedTubeDataReading in seedTubeDataReadings)
+            IEnumerable<IGrouping<int, SeedTubeData>> allSeedsGroupBySensorNumber = seedTubeDataReadings.SelectMany(c => c.SeedTubeDataReadings).GroupBy(a => a.SensorNumber).ToList();
+
+            foreach (var seedTubeDatas in allSeedsGroupBySensorNumber)
             {
-                var allSeedsGroupBySensorNumber = seedTubeDataReading.SeedTubeDataReadings.GroupBy(a => a.SensorNumber);
+                int maxValuePerSensor = seedTubeDatas.Max(a => a.SensorValue);
 
-                foreach (var stdr in allSeedsGroupBySensorNumber)
+                SensorParameter sp = new SensorParameter()
                 {
-                    var maxValuePerSensor = stdr.Max(a => a.SensorValue);
+                    SensorMaxValue = (int)(maxValuePerSensor * 1.1),
+                    SensorNumber = seedTubeDatas.Key
+                };
 
-                    SensorParameter sp = new SensorParameter()
-                    {
-                        SensorMaxValue = (int)(maxValuePerSensor * 1.1),
-                        SensorNumber = stdr.Key
-                    };
-
-                    SeedTubeDataService.AddSensorParameter(sp);
-                }
+                _seedTubeDataService.AddSensorParameter(sp);
             }
+
+            CalibrationParameters.Clear();
+            foreach (var sensorParameter in _seedTubeDataService.SensorParameters)
+            {
+                CalibrationParameters.Add(sensorParameter);
+            }
+
+            RaisePropertyChanged("CalibrationSettingsVisibility");
         }
 
         private bool CanSave()
@@ -121,10 +150,11 @@ namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
                 try
                 {
                     StreamReader str = new StreamReader(lastOrDefault.FullName);
-                    var planter = PlanterService.Verify(str.ReadToEnd());
+                    var planter = _planterService.Verify(str.ReadToEnd());
                 }
                 catch (Exception e)
                 {
+                    MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     _logger.Error(e.Message);
                 }
             }

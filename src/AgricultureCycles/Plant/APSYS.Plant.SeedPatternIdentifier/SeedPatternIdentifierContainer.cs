@@ -3,6 +3,7 @@
     using Autofac;
     using Core;
     using Infrastructure.Communication.SerialPortControl;
+    using Service;
     using View;
     using ViewModel;
 
@@ -19,6 +20,9 @@
             Builder.RegisterType<SeedPatternIdentifierViewModel>();
             Builder.RegisterType<SerialPortControlView>();
             Builder.RegisterType<SerialPortControlViewModel>();
+
+            Builder.RegisterType<SeedTubeDataService>().SingleInstance();
+            Builder.RegisterType<PlanterService>().SingleInstance();
         }
     }
 }

@@ -6,8 +6,27 @@
         Title="SeedPatternIdentifierView">
     <xctk:BusyIndicator BusyContent="{Binding StatusProcessamento}" IsBusy="{Binding Processando}" >
         <StackPanel>
-            <StackPanel>
+            <StackPanel Orientation="Horizontal">
                 <ContentPresenter Content="{Binding SerialPortControl}" Width="130" HorizontalAlignment="Left"/>
+
+                <GroupBox Header="Calibration Settings" Margin="0,5" Visibility="{Binding CalibrationSettingsVisibility}">
+                    <ItemsControl ItemsSource="{Binding CalibrationParameters}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <!-- ItemTemplate -->
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <GroupBox Header="{Binding SensorNumber}" HeaderStringFormat="Sensor {0}"  Margin="0,5">
+                                    <TextBlock Text="{Binding SensorMaxValue, StringFormat='Value: {0}'}"></TextBlock>
+                                </GroupBox>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </GroupBox>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal">

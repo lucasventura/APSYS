@@ -9,11 +9,11 @@ namespace APSYS.Plant.SeedPatternIdentifier.Service
     public class SeedTubeDataService
     {
         // todo: corrigir logs com IoC
-        private static Logger _loggerResults;
+        private Logger _loggerResults;
 
-        public static List<SensorParameter> SensorParameters { get; set; }
+        public List<SensorParameter> SensorParameters { get; set; }
 
-        public static SeedTubeData ParseSensorData(string sensorData)
+        public SeedTubeData ParseSensorData(string sensorData)
         {
             try
             {
@@ -34,7 +34,7 @@ namespace APSYS.Plant.SeedPatternIdentifier.Service
             return null;
         }
 
-        public static SeedCounter GetSeedCounter(List<SeedTubeDataReading> seedTubeDataReadings)
+        public SeedCounter GetSeedCounter(List<SeedTubeDataReading> seedTubeDataReadings)
         {
             var seedCounter = new SeedCounter();
 
@@ -46,7 +46,7 @@ namespace APSYS.Plant.SeedPatternIdentifier.Service
 
                     if (maxValueSensor == null)
                     {
-                        throw new Exception(string.Format("Sensor {0} não existe.", tubeDataReading.SensorNumber));
+                        throw new Exception(string.Format("Erro ao obter contador de semente. Sensor {0} não existe.", tubeDataReading.SensorNumber));
                     }
 
                     if (tubeDataReading.SensorValue > maxValueSensor.SensorMaxValue)
@@ -61,7 +61,7 @@ namespace APSYS.Plant.SeedPatternIdentifier.Service
             return seedCounter;
         }
 
-        public static List<SeedTubeDataReading> MountSeedTubeDataReadings(IEnumerable<string> seedTubeDataLineText)
+        public List<SeedTubeDataReading> MountSeedTubeDataReadings(IEnumerable<string> seedTubeDataLineText)
         {
             _loggerResults = LogManager.GetLogger("logDataResultsRule");
             _loggerResults.Info("---------------------------------------- Nova Verificação ----------------------------------------\n");
@@ -82,7 +82,7 @@ namespace APSYS.Plant.SeedPatternIdentifier.Service
                     var seedTubeDatas = new List<SeedTubeData>();
                     foreach (string seedTubeDataText in seedTubeDataReadingText)
                     {
-                        var seedTubeData = SeedTubeDataService.ParseSensorData(seedTubeDataText);
+                        var seedTubeData = ParseSensorData(seedTubeDataText);
 
                         if (seedTubeData == null)
                         {
@@ -124,7 +124,7 @@ namespace APSYS.Plant.SeedPatternIdentifier.Service
             return seedTubeDataReadings;
         }
 
-        public static IEnumerable<string> SplitPureTextToSeedTube(string logData)
+        public IEnumerable<string> SplitPureTextToSeedTube(string logData)
         {
             char[] separatora = { ';', '\r', '\n', '$', '_' };
             var splitFieldsa = logData.Split(separatora, StringSplitOptions.RemoveEmptyEntries);
@@ -149,7 +149,7 @@ namespace APSYS.Plant.SeedPatternIdentifier.Service
             return splitFields;
         }
 
-        public static void AddSensorParameter(SensorParameter sp)
+        public void AddSensorParameter(SensorParameter sp)
         {
             if (SensorParameters == null)
             {
@@ -168,7 +168,7 @@ namespace APSYS.Plant.SeedPatternIdentifier.Service
             }
         }
 
-        private static SensorParameter GetMaxValueSensorBySensorNumber(int sensorNumber)
+        private SensorParameter GetMaxValueSensorBySensorNumber(int sensorNumber)
         {
             if (SensorParameters == null)
             {

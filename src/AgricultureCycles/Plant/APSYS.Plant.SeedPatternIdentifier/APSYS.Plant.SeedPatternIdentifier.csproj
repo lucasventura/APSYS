@@ -45,6 +45,7 @@
       <HintPath>..\..\..\..\libs\NLog.3.1.0.0\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml">
@@ -70,7 +71,7 @@
     <Compile Include="SeedPatternIdentifierContainer.cs" />
     <Compile Include="Service\PlanterService.cs" />
     <Compile Include="Domain\SeedCounter.cs" />
-    <Compile Include="Service\SensorParameter.cs" />
+    <Compile Include="Domain\SensorParameter.cs" />
     <Compile Include="View\SeedPatternIdentifierView.xaml.cs">
       <DependentUpon>SeedPatternIdentifierView.xaml</DependentUpon>
     </Compile>

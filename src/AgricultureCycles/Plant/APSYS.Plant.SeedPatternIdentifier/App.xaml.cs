@@ -12,7 +12,7 @@
     /// </summary>
     public partial class App : Application
     {
-        private readonly ApsysContainer _container;
+        private ApsysContainer _container;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="App"/> class.
@@ -33,7 +33,7 @@
 
             var windowManager = _container.Container.Resolve<WindowManager>();
 
-            windowManager.ShowDialogWindow<SeedPatternIdentifierView, SeedPatternIdentifierViewModel>();
+            windowManager.ShowWindow<SeedPatternIdentifierView, SeedPatternIdentifierViewModel>();
         }
 
         protected override void OnExit(ExitEventArgs e)

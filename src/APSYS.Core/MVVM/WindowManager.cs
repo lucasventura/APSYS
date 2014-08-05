@@ -1,7 +1,5 @@
 ﻿namespace APSYS.Core.MVVM
 {
-    using System.Windows;
-    using System.Windows.Controls;
     using Autofac;
 
     public class WindowManager
@@ -42,6 +40,24 @@
             return view;
         }
 
+        public BaseControlView OpenControl(string viewName, string viewModelName)
+        {
+            var view = _container.ResolveNamed<BaseControlView>(viewName);
+            var viewModel = (SimpleViewModel)_container.ResolveNamed(viewModelName, typeof(BaseViewModel<>));
+            view.DataContext = viewModel;
+            view.Initialize();
+            viewModel.Initialize();
+            return view;
+        }
+
+        public BaseControlView OpenControl(BaseControlView view, SimpleViewModel model)
+        {
+            view.DataContext = model;
+            view.Initialize();
+            model.Initialize();
+            return view;
+        }
+
         private TView BuildView<TView, TViewModel>()
             where TView : BaseView
             where TViewModel : BaseViewModel<TView>
@@ -53,38 +69,6 @@
             view.Initialize();
             viewModel.Initialize();
             return view;
-        }
-
-        public BaseControlView OpenControl(string viewName, string viewModelName)
-        {
-            var view = _container.ResolveNamed<BaseControlView>(viewName);
-            var viewModel = (BaseViewModel)_container.ResolveNamed(viewModelName, typeof(BaseViewModel<>));
-            view.DataContext = viewModel;
-            view.Initialize();
-            viewModel.Initialize();
-            return view;
-        }
-
-        public BaseControlView OpenControl(BaseControlView view, BaseViewModel model)
-        {
-            view.DataContext = model;
-            view.Initialize();
-            model.Initialize();
-            return view;
-        }
-    }
-
-    public class BaseControlView : UserControl
-    {
-        public virtual void Initialize()
-        {
-        }
-    }
-
-    public class BaseView : Window
-    {
-        public virtual void Initialize()
-        {
         }
     }
 }
