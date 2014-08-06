@@ -122,6 +122,15 @@ namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
                     StreamReader str = new StreamReader(lastOrDefault.FullName);
                     var planter = _planterService.Verify(str.ReadToEnd());
 
+                    foreach (var seedTube in planter.SeedTubes)
+                    {
+                        var tubeDataReadingsWithSeed = seedTube.SeedTubeDataReadings.SelectMany(a => a.SeedTubeDataReadings).Where(b => b.HasSeed);
+
+                        string messageBoxText = string.Format("Total: {0}", tubeDataReadingsWithSeed.Count());
+
+                        MessageBox.Show(messageBoxText, "Results", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+
                     //// todo: Exibir resultados
                 }
                 catch (Exception e)
@@ -179,7 +188,7 @@ namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
 
                 SensorParameter sp = new SensorParameter()
                 {
-                    SensorMaxValue = (int)(maxValuePerSensor * 1.1),
+                    SensorMaxValue = (int)(maxValuePerSensor * 1.8),
                     SensorNumber = seedTubeDatas.Key
                 };
 
