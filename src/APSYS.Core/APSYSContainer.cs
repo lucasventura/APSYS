@@ -4,6 +4,7 @@
     using Autofac.Core;
     using Infrastructure.Communication.Domain;
     using Infrastructure.Communication.Domain.Serial;
+    using Infrastructure.Communication.Domain.Socket;
     using MVVM;
 
     public abstract class ApsysContainer
@@ -30,6 +31,7 @@
         {
             // Builder.RegisterType<SerialPortService>().As<ICommunicationOBC>();
             Builder.RegisterType<SerialPortService>().SingleInstance();
+            Builder.RegisterType<UdpListenerService>().SingleInstance();
             Builder.RegisterType<WindowManager>().SingleInstance();
 /*
             // Builder.RegisterModule<NLogModule>();

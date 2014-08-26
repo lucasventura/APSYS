@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.ObjectModel;
+    using System.IO.Ports;
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
@@ -19,7 +20,6 @@
         private string _serialPortName;
         private int _baudRate;
 
-        // public SerialPortControlViewModel()
         public SerialPortControlViewModel(SerialPortService serialPortService)
         {
             _serialPortService = serialPortService;

@@ -1,0 +1,29 @@
+﻿<mvvm:BaseControlView x:Class="APSYS.Infrastructure.Communication.SocketControl.SocketControlView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mvvm="clr-namespace:APSYS.Core.MVVM;assembly=APSYS.Core"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             mc:Ignorable="d">
+    <StackPanel>
+        <GroupBox Header="Socket Configure" Margin="0,5">
+            <StackPanel Margin="0,5,0,0">
+                <StackPanel>
+                    <TextBlock>Socket Address:</TextBlock>
+                    <TextBox Text="{Binding SocketAddress}"></TextBox>
+                </StackPanel>
+
+                <StackPanel>
+                    <TextBlock>Local Port:</TextBlock>
+                    <TextBox Text="{Binding LocalPort}"></TextBox>
+                </StackPanel>
+
+                <StackPanel>
+                    <Button Margin="0,10,0,0" Content="{Binding SocketButtonText, FallbackValue='Connect'}" Command="{Binding SocketOnOffCommand}"></Button>
+                </StackPanel>
+
+            </StackPanel>
+        </GroupBox>
+    </StackPanel>
+</mvvm:BaseControlView>

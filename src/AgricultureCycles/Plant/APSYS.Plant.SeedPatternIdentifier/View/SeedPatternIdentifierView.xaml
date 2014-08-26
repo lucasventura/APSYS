@@ -7,6 +7,7 @@
         <StackPanel>
             <StackPanel Orientation="Horizontal">
                 <ContentPresenter Content="{Binding SerialPortControl}" Width="130" HorizontalAlignment="Left"/>
+                <ContentPresenter Content="{Binding SocketControl}" Width="130" HorizontalAlignment="Left"/>
 
                 <GroupBox Header="Calibration Settings" Margin="0,5" Visibility="{Binding CalibrationSettingsVisibility}">
                     <ItemsControl ItemsSource="{Binding CalibrationParameters}">

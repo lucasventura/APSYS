@@ -8,6 +8,8 @@
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1623:PropertySummaryDocumentationMustMatchAccessors", Justification = "Reviewed.")]
     public interface ICommunicationOBC
     {
+        event EventHandler DataReceived;
+
         /// <summary>
         /// Verify that the Communication Channel is Open
         /// </summary>

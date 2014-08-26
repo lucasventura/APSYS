@@ -39,6 +39,8 @@
         {
         }
 
+        public event EventHandler DataReceived;
+
         /// <summary>
         /// Serial port state enum
         /// </summary>
@@ -54,8 +56,6 @@
             /// </summary>
             Close
         }
-
-        public bool IsCalibration { get; set; }
 
         public bool IsDataEnqueueEnable { get; set; }
 
@@ -101,11 +101,6 @@
         /// Receive Data Enqueue
         /// </summary>
         public ConcurrentQueue<string> DataEnqueue { get; set; }
-
-        /// <summary>
-        /// Receive Data Enqueue
-        /// </summary>
-        public ConcurrentQueue<string> CalibrationDataEnqueue { get; set; }
 
         /// <summary>
         /// Connect to the Communication Channel
@@ -159,25 +154,7 @@
         /// <param name="eventArgs">Event Args</param>
         public void ReceivedData(object sender, EventArgs eventArgs)
         {
-            try
-            {
-                SerialPort sp = (SerialPort)sender;
-                string newData = sp.ReadExisting();
-
-                if (IsCalibration)
-                {
-                    CalibrationDataEnqueue.Enqueue(newData);
-                }
-
-                if (IsDataEnqueueEnable)
-                {
-                    DataEnqueue.Enqueue(newData);
-                }
-            }
-            catch (Exception exception)
-            {
-                LogManager.GetCurrentClassLogger().Error(exception.Message);
-            }
+            DataReceived.Invoke(sender, eventArgs);
         }
 
         public void Close()
@@ -202,8 +179,16 @@
             _serialPort.BaudRate = baudRate;
             _serialPort.DataReceived += ReceivedData;
             DataEnqueue = new ConcurrentQueue<string>();
-            CalibrationDataEnqueue = new ConcurrentQueue<string>();
             Connect();
+        }
+
+        protected virtual void OnDataReceived()
+        {
+            var handler = DataReceived;
+            if (handler != null)
+            {
+                handler(this, EventArgs.Empty);
+            }
         }
     }
 }

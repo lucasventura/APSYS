@@ -4,20 +4,18 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{610FDC53-1398-4FDB-985C-281F62A1B4A7}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <ProjectGuid>{96139A6E-6BBC-4F38-8D40-4CB671D0B25D}</ProjectGuid>
+    <OutputType>library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>APSYS.Plant.SeedPatternIdentifier</RootNamespace>
-    <AssemblyName>APSYS.Plant.SeedPatternIdentifier</AssemblyName>
+    <RootNamespace>APSYS.Infrastructure.Communication.SocketControl</RootNamespace>
+    <AssemblyName>APSYS.Infrastructure.Communication.SocketControl</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
-    <StyleCopTreatErrorsAsWarnings>false</StyleCopTreatErrorsAsWarnings>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -25,29 +23,23 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac">
-      <HintPath>..\..\..\..\libs\Autofac.3.5.0\lib\net40\Autofac.dll</HintPath>
-    </Reference>
-    <Reference Include="NLog">
-      <HintPath>..\..\..\..\libs\NLog.3.1.0.0\lib\net45\NLog.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
@@ -57,29 +49,6 @@
     <Reference Include="Xceed.Wpf.Toolkit">
       <HintPath>..\..\..\..\libs\Extended.Wpf.Toolkit.2.2.1\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Domain\Planter.cs" />
-    <Compile Include="SeedPatternIdentifierContainer.cs" />
-    <Compile Include="Service\PlanterService.cs" />
-    <Compile Include="Domain\SeedCounter.cs" />
-    <Compile Include="Domain\SensorParameter.cs" />
-    <Compile Include="View\SeedPatternIdentifierView.xaml.cs">
-      <DependentUpon>SeedPatternIdentifierView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ViewModel\SeedPatternIdentifierViewModel.cs" />
-    <Compile Include="Domain\SeedTube.cs" />
-    <Compile Include="Domain\SeedTubeData.cs" />
-    <Compile Include="Domain\SeedTubeDataReading.cs" />
-    <Compile Include="Service\SeedTubeDataService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -95,16 +64,14 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="SocketControlView.xaml.cs">
+      <DependentUpon>SocketControlView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SocketControlViewModel.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="app.config" />
-    <None Include="NLog.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -112,7 +79,7 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="View\SeedPatternIdentifierView.xaml">
+    <Page Include="SocketControlView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -122,25 +89,12 @@
       <Project>{D412531C-A191-451F-84DA-83B4810D90F6}</Project>
       <Name>APSYS.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Infrastructure\Common\APSYS.Infrastructure.Common\APSYS.Infrastructure.Common.csproj">
-      <Project>{58E20E25-6E02-41CD-A2F7-1C5295D354F9}</Project>
-      <Name>APSYS.Infrastructure.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Infrastructure\Communication\APSYS.Infrastructure.Communication.Domain\APSYS.Infrastructure.Communication.Domain.csproj">
+    <ProjectReference Include="..\APSYS.Infrastructure.Communication.Domain\APSYS.Infrastructure.Communication.Domain.csproj">
       <Project>{D2BA3811-DE03-4711-B0D5-04743095BD06}</Project>
       <Name>APSYS.Infrastructure.Communication.Domain</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Infrastructure\Communication\APSYS.Infrastructure.Communication.SerialPortControl\APSYS.Infrastructure.Communication.SerialPortControl.csproj">
-      <Project>{1B24E331-EBEC-4ABF-8E3B-238569C4C043}</Project>
-      <Name>APSYS.Infrastructure.Communication.SerialPortControl</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Infrastructure\Communication\APSYS.Infrastructure.Communication.SocketControl\APSYS.Infrastructure.Communication.SocketControl.csproj">
-      <Project>{96139A6E-6BBC-4F38-8D40-4CB671D0B25D}</Project>
-      <Name>APSYS.Infrastructure.Communication.SocketControl</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\..\..\..\Tools\StyleCop\v4.7\StyleCop.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

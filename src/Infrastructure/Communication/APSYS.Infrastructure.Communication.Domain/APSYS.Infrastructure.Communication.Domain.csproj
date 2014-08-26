@@ -52,6 +52,7 @@
     <Compile Include="ICommunicationOBC.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serial\SerialPortService.cs" />
+    <Compile Include="Socket\UDPListenerService.cs" />
     <Compile Include="Utils\SerialPortUtil.cs" />
     <Compile Include="WebSocket\MensagemWebSocketDTO.cs" />
     <Compile Include="WebSocket\WebSocketService.cs" />

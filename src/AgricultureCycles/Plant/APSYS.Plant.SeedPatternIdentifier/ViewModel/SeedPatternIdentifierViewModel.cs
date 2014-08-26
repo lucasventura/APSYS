@@ -5,14 +5,18 @@ namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.IO;
+    using System.IO.Ports;
     using System.Linq;
+    using System.Text;
     using System.Windows;
     using System.Windows.Input;
     using System.Windows.Threading;
     using Core.MVVM;
     using Domain;
     using Infrastructure.Communication.Domain.Serial;
+    using Infrastructure.Communication.Domain.Socket;
     using Infrastructure.Communication.SerialPortControl;
+    using Infrastructure.Communication.SocketControl;
     using NLog;
     using NLog.Targets;
     using NLog.Targets.Wrappers;
@@ -22,6 +26,7 @@ namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
     public class SeedPatternIdentifierViewModel : BaseViewModel<SeedPatternIdentifierView>
     {
         private readonly SerialPortService _serialPortService;
+        private readonly UdpListenerService _udpListenerService;
         private readonly SeedTubeDataService _seedTubeDataService;
         private readonly PlanterService _planterService;
         private Logger _logger;
@@ -29,19 +34,29 @@ namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
         private bool _isLogEnable;
         private Logger _loggerData;
 
-        public SeedPatternIdentifierViewModel(SerialPortService serialPortService, SerialPortControlView serialPortControlView, SeedTubeDataService seedTubeDataService, PlanterService planterService)
+        public SeedPatternIdentifierViewModel(SerialPortService serialPortService, UdpListenerService udpListenerService, SerialPortControlView serialPortControlView, SeedTubeDataService seedTubeDataService, PlanterService planterService, SocketControlView socketControlView)
         {
             SerialPortControl = serialPortControlView;
+            SocketControl = socketControlView;
             _serialPortService = serialPortService;
+            _udpListenerService = udpListenerService;
+            _udpListenerService.DataReceived += NewSocketData;
+            _serialPortService.DataReceived += NewSerialData;
             _seedTubeDataService = seedTubeDataService;
             _planterService = planterService;
             _logger = LogManager.GetLogger("logDataRule");
             GlobalDiagnosticsContext.Set("StartTime", DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss"));
         }
-
+        
         public SerialPortControlView SerialPortControl { get; set; }
 
+        public SocketControlView SocketControl { get; set; }
+
         public ObservableCollection<SensorParameter> CalibrationParameters { get; set; }
+
+        public bool IsCalibration { get; set; }
+
+        public ConcurrentQueue<string> CalibrationDataEnqueue { get; set; }
 
         public bool IsLogEnable
         {
@@ -96,6 +111,7 @@ namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
         public override void Initialize()
         {
             CalibrationParameters = new ObservableCollection<SensorParameter>();
+            CalibrationDataEnqueue = new ConcurrentQueue<string>();
         }
 
         private bool CanCleanQueue()
@@ -122,16 +138,55 @@ namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
                     StreamReader str = new StreamReader(lastOrDefault.FullName);
                     var planter = _planterService.Verify(str.ReadToEnd());
 
+                    /*  foreach (var seedTube in planter.SeedTubes)
+                      {
+                          var tubeDataReadingsWithSeed = seedTube.SeedTubeDataReadings.SelectMany(a => a.SeedTubeDataReadings).Where(b => b.HasSeed);
+
+                          string messageBoxText = string.Format("Total: {0}", tubeDataReadingsWithSeed.Count());
+
+                          MessageBox.Show(messageBoxText, "Results", MessageBoxButton.OK, MessageBoxImage.Information);
+                      }*/
+
+                    var stb = new StringBuilder();
+                    stb.AppendLine(string.Format("Total de tubos de sementes: {0}\n", planter.SeedTubes.Count));
+
                     foreach (var seedTube in planter.SeedTubes)
                     {
-                        var tubeDataReadingsWithSeed = seedTube.SeedTubeDataReadings.SelectMany(a => a.SeedTubeDataReadings).Where(b => b.HasSeed);
+                        stb.AppendLine(string.Format("SeedTube {0} - Total de Leituras: {1}", seedTube.SeedTubeNumber, seedTube.SeedTubeDataReadings.Count));
 
-                        string messageBoxText = string.Format("Total: {0}", tubeDataReadingsWithSeed.Count());
+                        var dataReadingWithSeed = seedTube.SeedTubeDataReadings.SelectMany(b => b.SeedTubeDataReadings).Where(a => a.HasSeed).ToList();
+                        var dataReadingWithNoSeed = seedTube.SeedTubeDataReadings.SelectMany(b => b.SeedTubeDataReadings).Where(a => !a.HasSeed);
+                        stb.AppendLine(string.Format("Leituras com sementes {0}", dataReadingWithSeed.Count));
+                        stb.AppendLine(string.Format("Leituras sem sementes {0}", dataReadingWithNoSeed.Count()));
 
-                        MessageBox.Show(messageBoxText, "Results", MessageBoxButton.OK, MessageBoxImage.Information);
+                        var sensorsWithSeedCount = dataReadingWithSeed.GroupBy(a => a.SensorNumber).ToList();
+                        var sensorsWithSeedCountTotal = sensorsWithSeedCount.SelectMany(a => a).ToList().Count();
+
+                        foreach (var sensorGroup in sensorsWithSeedCount)
+                        {
+                            var count = sensorGroup.Count();
+                            double percent = (double)(100 * count) / sensorsWithSeedCountTotal;
+
+                            if (percent > 1)
+                            {
+                                stb.AppendLine(string.Format("Sensor {0} - Leituras com semente {1} - {2}%", sensorGroup.Key, count, percent));
+                            }
+
+                            var valueGroups = sensorGroup.GroupBy(a => a.SensorValue).ToList();
+                            var valueGroupsCount = valueGroups.SelectMany(a => a).Count();
+                            foreach (var valueGroup in valueGroups)
+                            {
+                                var countValue = valueGroup.Count();
+                                double percentValue = (100 * countValue) / (double)valueGroupsCount;
+                                if (percentValue > 0.8)
+                                {
+                                    stb.AppendLine(string.Format("Sensor {0} - Leituras com valor {1} - {2}- {3}%", sensorGroup.Key, valueGroup.Key, countValue, percentValue.ToString("f2")));
+                                }
+                            }
+                        }
                     }
 
-                    //// todo: Exibir resultados
+                    MessageBox.Show(stb.ToString(), "Results", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch (Exception e)
                 {
@@ -152,7 +207,7 @@ namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
 
         private void PatternIdentifier()
         {
-            _serialPortService.IsCalibration = true;
+            IsCalibration = true;
 
             _dispatcherTimerCalibration = new DispatcherTimer();
             _dispatcherTimerCalibration.Interval = TimeSpan.FromSeconds(1);
@@ -167,11 +222,11 @@ namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
             _dispatcherTimerCalibration.Stop();
             _logger.Info("Timer de calibramento finalizado");
 
-            _serialPortService.IsCalibration = false;
+            IsCalibration = false;
 
             string tst = string.Empty;
             string dataLog;
-            while (_serialPortService.CalibrationDataEnqueue.TryDequeue(out dataLog))
+            while (CalibrationDataEnqueue.TryDequeue(out dataLog))
             {
                 _logger.Info(dataLog);
                 tst += dataLog;
@@ -193,6 +248,11 @@ namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
                 };
 
                 _seedTubeDataService.AddSensorParameter(sp);
+            }
+
+            if (_seedTubeDataService.SensorParameters == null)
+            {
+                return;
             }
 
             CalibrationParameters.Clear();
@@ -265,6 +325,34 @@ namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
               }*/
 
             return fileName;
+        }
+
+        private void NewSerialData(object sender, EventArgs e)
+        {
+            try
+            {
+                SerialPort sp = (SerialPort)sender;
+                string newData = sp.ReadExisting();
+
+                if (IsCalibration)
+                {
+                    CalibrationDataEnqueue.Enqueue(newData);
+                }
+
+                /*if (IsDataEnqueueEnable)
+                {
+                    _serialPortService.DataEnqueue.Enqueue(newData);
+                }*/
+            }
+            catch (Exception exception)
+            {
+                LogManager.GetCurrentClassLogger().Error(exception.Message);
+            }
+        }
+
+        private void NewSocketData(object sender, EventArgs e)
+        {
+            // todo: Implementar retorno do socket
         }
     }
 }

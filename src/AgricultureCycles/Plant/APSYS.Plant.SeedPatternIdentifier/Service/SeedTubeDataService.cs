@@ -172,7 +172,29 @@ namespace APSYS.Plant.SeedPatternIdentifier.Service
         {
             if (SensorParameters == null)
             {
-                return null;
+                SensorParameters = new List<SensorParameter>();
+
+                var sensorParameter1 = new SensorParameter()
+                {
+                    SensorNumber = 1,
+                    SensorMaxValue = 600
+                };
+
+                var sensorParameter2 = new SensorParameter()
+                {
+                    SensorNumber = 2,
+                    SensorMaxValue = 600
+                };
+
+                var sensorParameter3 = new SensorParameter()
+                {
+                    SensorNumber = 3,
+                    SensorMaxValue = 600
+                };
+
+                SensorParameters.Add(sensorParameter1);
+                SensorParameters.Add(sensorParameter2);
+                SensorParameters.Add(sensorParameter3);
             }
 
             if (!SensorParameters.Any(a => a.SensorNumber == sensorNumber))
