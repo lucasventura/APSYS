@@ -47,7 +47,7 @@ namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
             _logger = LogManager.GetLogger("logDataRule");
             GlobalDiagnosticsContext.Set("StartTime", DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss"));
         }
-        
+
         public SerialPortControlView SerialPortControl { get; set; }
 
         public SocketControlView SocketControl { get; set; }
@@ -352,7 +352,8 @@ namespace APSYS.Plant.SeedPatternIdentifier.ViewModel
 
         private void NewSocketData(object sender, EventArgs e)
         {
-            // todo: Implementar retorno do socket
+            Console.WriteLine((string)sender);
+            //// todo: Implementar retorno do socket
         }
     }
 }

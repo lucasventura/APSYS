@@ -93,6 +93,7 @@
             try
             {
                 _udpListenerService.InitializeSocket(SocketAddress, LocalPort);
+                _udpListenerService.DataReceived += data;
                 RaisePropertyChanged("SocketButtonText");
                 // RaisePropertyChanged("SerialClosed");
                 // _logger.Info("Serial Port {0} - {1} opened", SerialPortName, BaudRate);
@@ -105,6 +106,11 @@
                 // _logger.Error(messageText);
                 return false;
             }
+        }
+
+        private void data(object sender, EventArgs e)
+        {
+            SocketAddress = (string) sender;
         }
 
         private void CloseSocket()

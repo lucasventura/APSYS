@@ -4,8 +4,10 @@
 #include <SD.h>
 
 int status = WL_IDLE_STATUS;
-char ssid[] = "SURIA"; //  your network SSID (name) 
-char pass[] = "MadonaBoliSuriaMax";    // your network password (use for WPA, or use as key for WEP)
+//char ssid[] = "SURIA"; //  your network SSID (name) 
+//char pass[] = "MadonaBoliSuriaMax";    // your network password (use for WPA, or use as key for WEP)
+char ssid[] = "PITBULL401"; //  your network SSID (name) 
+char pass[] = "quepererecaopeludacapozaodefusca";    // your network password (use for WPA, or use as key for WEP)
 int keyIndex = 0;            // your network key Index number (needed only for WEP)
 
 unsigned int localPort = 2390;      // local port to listen on
@@ -95,7 +97,7 @@ void loop() {
 	}
 
 	data = "$";	
-	for (int analogChannel = 0; analogChannel < 6; analogChannel++)
+	for (int analogChannel = 0; analogChannel < 3; analogChannel++)
 	{
 		int sensorReading = analogRead(analogChannel);
 		data +=  String(analogChannel) + "," + String(sensorReading) + "_";			
@@ -119,6 +121,7 @@ void loop() {
 	Udp.write(cstr);
 	Udp.endPacket();
 	dataFile.close();
+delay(500);
 }
 
 void printWifiStatus() {
