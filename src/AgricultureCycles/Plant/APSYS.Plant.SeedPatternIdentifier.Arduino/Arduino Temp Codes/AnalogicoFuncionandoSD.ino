@@ -12,10 +12,8 @@ unsigned int localPort = 2390;      // local port to listen on
 char packetBuffer[255]; //buffer to hold incoming packet
 WiFiUDP Udp;
 
-int sensorNumber = 4;
-int reads[7] = {0,0,0,0,0,0,0};
 int cont;
-int limiar = 100;
+int limiar = 530;
 
 const int chipSelect = 4;
 char* fileName = "datalog.txt";
@@ -25,28 +23,29 @@ void setup() {
   pinMode(4, OUTPUT);
   digitalWrite(10, HIGH);
   digitalWrite(4, HIGH);
-
+  
   //Initialize serial and wait for port to open:
   Serial.begin(9600);
   while (!Serial) {
     ; // wait for serial port to connect. Needed for Leonardo only
   }
-  
-  Calibrate();
-  
+
   // check for the presence of the shield:
   if (WiFi.status() == WL_NO_SHIELD) {
     Serial.println("WiFi shield not present");
     // don't continue:
-    //while (true);
-    return;
+    while (true);
   }
 
   String fv = WiFi.firmwareVersion();
   if ( fv != "1.1.0" )
     Serial.println("Please upgrade the firmware");
 
-  Serial.print("Initializing SD card...");  
+  Serial.print("Initializing SD card...");
+  // make sure that the default chip select pin is set to
+  // output, even if you don't use it:
+  // pinMode(10, OUTPUT);
+  
   // see if the card is present and can be initialized:
   if (!SD.begin(chipSelect)) {
     Serial.println("Card failed, or not present");
@@ -61,6 +60,18 @@ void setup() {
     myFile.println("Iniciando");
   }    
   myFile.close();
+//  if (SD.exists("d002.txt")) 
+//  {
+//    Serial.println("d002.txt exists.");
+//  }
+//  else 
+//  {
+//    Serial.println("d002.txt doesn't exist.");
+//    // open a new file and immediately close it:
+//    Serial.println("Creating d002.txt...");
+//    File myFile = SD.open("d002.txt", FILE_WRITE);
+//    myFile.close();
+//  }  
   
   // attempt to connect to Wifi network:
   while ( status != WL_CONNECTED) {
@@ -68,7 +79,8 @@ void setup() {
     Serial.println(ssid);
     // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
     status = WiFi.begin(ssid,pass);
-    
+
+    // wait 10 seconds for connection:
     delay(2000);
   }
   Serial.println("Connected to wifi");
@@ -77,57 +89,36 @@ void setup() {
   Serial.println("\nStarting connection to server...");
   // if you get a connection, report back via serial:
   Udp.begin(localPort);
-  
-  // Calibrate();
 }
 
 void loop() {
-  String onlyWithSeed;
   String data;
   // if there's data available, read a packet
   int packetSize = Udp.parsePacket();
+  File dataFile = SD.open(fileName, FILE_WRITE);
+//  Serial.print("packetSize: ");
+//  Serial.println(packetSize);
   if (packetSize)
   {
     // read the packet into packetBufffer
     int len = Udp.read(packetBuffer, 255);
-    if (len > 0)
-	{
-		String receiveData = packetBuffer;
-                if(receiveData.startsWith("L"))
-                {
-                  limiar = receiveData.substring(1).toInt();                  
-                  Serial.println(packetBuffer);
-  		  Serial.print("limiar");
-		  Serial.println(limiar); 
-                }
-                else if(receiveData.startsWith("C"))
-                {
-                  Serial.println("Zerado");
-                  cont=0;
-                }
-                else if(receiveData.startsWith("K"))
-                {
-                  Calibrate();
-                }
-                
-		 
-		packetBuffer[len] = 0;
-	}	
+    if (len > 0) packetBuffer[len] = 0;
+    limiar = atoi(packetBuffer);
+    Serial.println(packetBuffer);
+    Serial.print("limiar");
+    Serial.println(limiar);              
   }
-  
-  File dataFile = SD.open(fileName, FILE_WRITE);
-   boolean seed = false;	
+     
+   boolean seed = false;
+	// int reads [5] = {0,0,0,0,0};
 	data = "$";	
-	for (int analogChannel = 0; analogChannel < sensorNumber; analogChannel++)
+	for (int analogChannel = 0; analogChannel < 5; analogChannel++)
 	{
-                String tempString;
 		int sensorReading = analogRead(analogChannel);
-		tempString =  String(analogChannel) + "," + String(sensorReading) + "_";	
-                data += tempString;		
-                if(sensorReading > reads[analogChannel])
+		data +=  String(analogChannel) + "," + String(sensorReading) + "_";	
+		if(sensorReading > limiar)
 		{
-                  onlyWithSeed +=tempString;
-		  seed = true;
+			seed = true;
 		}				
 		// reads[analogChannel] = sensorReading;	
 	}
@@ -144,19 +135,17 @@ void loop() {
         }  
         else 
         {
-          // Serial.println("error opening d001.txt");
+          Serial.println("error opening d001.txt");
         }        
         dataFile.close();               
 	Udp.endPacket();    
 
         if(seed)
 	{
-          digitalWrite(13,HIGH);
-          digitalWrite(13,LOW);
           cont++;          
           Serial.print(cont);          
           Serial.print(" ------ "); 	
-          Serial.println(onlyWithSeed);      
+          Serial.print(cstr);      
 	}
 }
 
@@ -177,25 +166,6 @@ void printWifiStatus() {
   Serial.print(rssi);
   Serial.println(" dBm");
 }
-
-void Calibrate()
-{
-  Serial.println("\nCalibrando...");
-  for (int analogChannel = 0; analogChannel < sensorNumber; analogChannel++)
-  {                
-    int sensorReading = analogRead(analogChannel);
-    reads[analogChannel] = sensorReading * 1.15;	
-    Serial.print("Sensor ");
-    Serial.print(analogChannel);
-    Serial.print(" Tolerancia ");
-    Serial.print(sensorReading);
-    Serial.print("\tAtribuido ");
-    Serial.print(reads[analogChannel]);
-    Serial.println("...");
-  }
-  Serial.println("\nCalibrado...");
-}
-
 
 
 

@@ -1,0 +1,11 @@
+Fazer calibramento para valor dos sensores
+Programa para identificar padrao de sementes
+ 	- Separar por modulos
+	- Comitar
+	- Ver libs
+	- Estruturar MVVM e IoC
+	- StyleCOP
+Fazer contagem das sementes
+Como comunicar o cliente
+Fazer novo circuito para leitura digital com comparativo
+Fazer novo circuito com leds ir 3mm
